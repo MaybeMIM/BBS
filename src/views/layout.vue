@@ -116,7 +116,7 @@ onMounted(() => initScroll());
   position: fixed;
   box-shadow: 0 2px 6px 0 #50a7d9;
   z-index: 999;
-  background: #fff;
+  background: #f3f2f2;
   transition: all 0.3s;
 
   &_content {
