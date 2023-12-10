@@ -1,10 +1,18 @@
 <template>
   <div>
     <div class="header" v-if="showHeader">
-      <div class="header_content" :style="{ width: proxy.globalInfo.bodyWidth + 'px' }">
+      <div
+        class="header_content"
+        :style="{ width: proxy.globalInfo.bodyWidth + 'px' }"
+      >
         <router-link to="/" class="header_logo">
           <!-- TODO:优化一下 用图标svg -->
-          <span v-for="(item, index) in logoInfo" :style="{ color: item.color }" :key="index">{{ item.letter }}</span>
+          <span
+            v-for="(item, index) in logoInfo"
+            :style="{ color: item.color }"
+            :key="index"
+            >{{ item.letter }}</span
+          >
         </router-link>
         <!-- 模块信息 -->
         <div class="menu-penal"></div>
@@ -19,25 +27,38 @@
             </el-button>
           </div>
           <el-button-group :style="{ 'margin-left': '10px' }">
-            <el-button type="primary" plain>登录</el-button>
+            <el-button type="primary" plain @click="visible = true"
+              >登录</el-button
+            >
             <el-button type="primary" plain>注册</el-button>
           </el-button-group>
         </div>
       </div>
     </div>
-    <div :style="{ height: '1500px' }">
+    <Dialog :visible="visible" :buttons="buttons" @close="visible = false">
+      message
+    </Dialog>
+    <div>
       <router-view />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick, computed, onMounted } from "vue";
+import {
+  ref,
+  reactive,
+  getCurrentInstance,
+  nextTick,
+  computed,
+  onMounted,
+} from "vue";
 import { useRouter, useRoute } from "vue-router";
 const { proxy } = getCurrentInstance();
 const router = useRouter();
 const route = useRoute();
 
+const visible = ref(true);
 const logoInfo = [
   {
     letter: "B",
@@ -53,33 +74,39 @@ const logoInfo = [
   },
 ];
 
-const showHeader = ref(true)
+const showHeader = ref(true);
 
 // 获取滚动条高度 (用于header的行为)
 const getScrollTop = () => {
-  return document.documentElement.scrollTop || document.body.scrollTop
-
-}
+  return document.documentElement.scrollTop || document.body.scrollTop;
+};
 function initScroll() {
-  let initScrollTop = getScrollTop()
-  let scrollType = 0
-  window.addEventListener('scroll', () => {
-    let currentScrollTop = getScrollTop()
+  let initScrollTop = getScrollTop();
+  let scrollType = 0;
+  window.addEventListener("scroll", () => {
+    let currentScrollTop = getScrollTop();
     if (currentScrollTop > initScrollTop) {
       // 往下滚动
-      scrollType = 1
+      scrollType = 1;
     } else {
-      scrollType = 0
+      scrollType = 0;
     }
-    initScrollTop = currentScrollTop
+    initScrollTop = currentScrollTop;
     if (scrollType === 1 && currentScrollTop > 150) {
-      showHeader.value = false
+      showHeader.value = false;
     } else {
-      showHeader.value = true
+      showHeader.value = true;
     }
-  })
+  });
 }
-onMounted(() => initScroll())
+const buttons = ref([
+  {
+    text: "确定",
+    type: "primary",
+  },
+]);
+
+onMounted(() => initScroll());
 </script>
 
 <style lang="scss" scoped>
@@ -87,7 +114,7 @@ onMounted(() => initScroll())
   width: 100%;
   height: 60px;
   position: fixed;
-  box-shadow: 0 2px 6px 0 #ddd;
+  box-shadow: 0 2px 6px 0 #50a7d9;
   z-index: 999;
   background: #fff;
   transition: all 0.3s;
