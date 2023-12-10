@@ -12,6 +12,8 @@ import "element-plus/dist/index.css";
 //图标 图标在附件中
 import "@/assets/icon/iconfont.css";
 
+// 全局方法
+import Request from "@/utils/request";
 // 全局组件
 import Dialog from "@/components/dialog.vue";
 
@@ -22,6 +24,7 @@ app.config.globalProperties.VueCookies = VueCookies;
 app.config.globalProperties.globalInfo = {
   bodyWidth: 1300,
 };
+app.config.globalProperties.Request = Request
 
 app.component('Dialog', Dialog)
 

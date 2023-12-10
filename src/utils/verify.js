@@ -6,28 +6,28 @@ const regs = {
   password: /^(?=.*\d)(?=.*[a-zA-Z])[\da-zA-Z~!@#$%^&*_]{6,16}$/
 }
 
-function verify(rule, value, regs, callback) {
+function verify(rule, value, regs, cb) {
   if (value) {
     // 有值 且 正则匹配得上 校验
     if (regs.test(value)) {
-      callback()
+      cb()
     } else {
       // 否则 校验失败信息
-      callback(new Error(rule.message))
+      cb(new Error(rule.message))
     }
   } else {
-    callback()
+    cb()
   }
 }
 
 export default {
-  email: (rule, value, callback) => {
-    return verify(rule, value, regs.email, callback)
+  email: (rule, value, cb) => {
+    return verify(rule, value, regs.email, cb)
   },
-  number: (rule, value, callback) => {
-    return verify(rule, value, regs.number, callback)
+  number: (rule, value, cb) => {
+    return verify(rule, value, regs.number, cb)
   },
-  password: (rule, value, callback) => {
-    return verify(rule, value, regs.password, callback)
+  password: (rule, value, cb) => {
+    return verify(rule, value, regs.password, cb)
   },
 }

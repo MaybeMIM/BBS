@@ -122,7 +122,6 @@
           <div class="check-code-panel">
             <el-input
               size="large"
-              clearable
               placeholder="请输入验证码"
               v-model.trim="formData.checkCode"
             >
@@ -184,7 +183,6 @@
           <div class="check-code-panel">
             <el-input
               size="large"
-              clearable
               placeholder="请输入验证码"
               v-model.trim="codeFormDate.checkCode"
             >
@@ -214,6 +212,7 @@ import {
   computed,
 } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Message from "@/utils/message";
 import Verify from "@/utils/verify";
 defineExpose({ showPanel });
 
@@ -250,6 +249,7 @@ const SendMailCode = reactive({
 // TODO：优化这个api(放数据模型类 或者 接口文件)
 const api = {
   checkCode: "/api/checkCode",
+  sendEmailCode: "/sendEmailCode",
 };
 
 const title = computed(() => {
@@ -333,18 +333,30 @@ function showSendMailCodeDialog() {
   });
 }
 // 验证二次输入密码
-function checkRePassword(rule, value, callback) {
+function checkRePassword(rule, value, cb) {
   if (value !== formData.value.registerPassword) {
-    callback(new Error(rule.message));
+    cb(new Error(rule.message));
   } else {
-    callback();
+    cb();
   }
 }
 // 发送邮箱验证码
 function sendEmailCode() {
-  codeForm.value.validate((valid) => {
+  codeForm.value.validate(async (valid) => {
     if (!valid) return;
-    console.log("correct");
+
+    const params = Object.assign({}, codeFormDate.value);
+    params.type = 0; // 0:注册 1:找回密码
+    let result = await proxy.Request({
+      url: api.sendEmailCode,
+      params,
+      errorCallback: () => {
+        changeCheckCode(1);
+      },
+    });
+    if (!result) return;
+    Message.success("验证发送成功,请登录邮箱查看");
+    SendMailCode.visible = false;
   });
 }
 </script>
