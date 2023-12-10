@@ -30,6 +30,10 @@
   background: #bfbfbf;
 }
 
+:root{
+  --link:#007bff
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
@@ -57,4 +61,8 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+a{
+  text-decoration: none;
+  color: var(--link);
 }

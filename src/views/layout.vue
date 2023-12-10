@@ -27,20 +27,21 @@
             </el-button>
           </div>
           <el-button-group :style="{ 'margin-left': '10px' }">
-            <el-button type="primary" plain @click="visible = true"
+            <el-button type="primary" plain @click="loginAndResign(1)"
               >登录</el-button
             >
-            <el-button type="primary" plain>注册</el-button>
+            <el-button type="primary" plain @click="loginAndResign(0)"
+              >注册</el-button
+            >
           </el-button-group>
         </div>
       </div>
     </div>
-    <Dialog :visible="visible" :buttons="buttons" @close="visible = false">
-      message
-    </Dialog>
     <div>
       <router-view />
     </div>
+    <!-- 登录 注册 -->
+    <Login ref="login" />
   </div>
 </template>
 
@@ -54,11 +55,11 @@ import {
   onMounted,
 } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import Login from "./login.vue";
 const { proxy } = getCurrentInstance();
 const router = useRouter();
 const route = useRoute();
 
-const visible = ref(true);
 const logoInfo = [
   {
     letter: "B",
@@ -99,13 +100,12 @@ function initScroll() {
     }
   });
 }
-const buttons = ref([
-  {
-    text: "确定",
-    type: "primary",
-  },
-]);
 
+// 登录 注册
+const login = ref();
+function loginAndResign(type) {
+  login.value.showPanel(type);
+}
 onMounted(() => initScroll());
 </script>
 
