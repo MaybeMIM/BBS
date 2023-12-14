@@ -7,6 +7,11 @@
       >
         <router-link to="/" class="header_logo">
           <!-- TODO:优化一下 用图标svg -->
+          <img
+            src="../assets/bbs_nav_icon.svg"
+            alt="bbs_icon"
+            class="bbs_icon"
+          />
           <span
             v-for="(item, index) in logoInfo"
             :style="{ color: item.color }"
@@ -136,7 +141,11 @@ onMounted(() => initScroll());
   .menu-penal {
     flex: 1;
   }
-
+  .bbs_icon {
+    width: 75px;
+    height: 50px;
+    margin-top: 10px;
+  }
   .user-info-penal {
     display: flex;
     width: 300px;
