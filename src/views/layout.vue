@@ -15,7 +15,27 @@
           <span class="header_title">BBS</span>
         </router-link>
         <!-- 模块信息 -->
-        <div class="menu-penal"></div>
+        <div class="menu-penal">
+          <span class="menu-item">全部</span>
+          <template v-for="board in boardList">
+            <el-popover
+              placement="bottom-start"
+              :width="300"
+              trigger="hover"
+              v-if="board.children.length > 0"
+            >
+              <template #reference>
+                <span class="menu-item">{{ board.boardName }}</span>
+              </template>
+              <div class="sub-board-list">
+                <span class="sub-board" v-for="subBoard in board.children">{{
+                  subBoard.boardName
+                }}</span>
+              </div>
+            </el-popover>
+            <span class="menu-item" v-else>{{ board.boardName }}</span>
+          </template>
+        </div>
         <!-- 登录注册 / 用户信息 -->
         <div class="user-info-penal">
           <div class="op-btn">
@@ -99,6 +119,7 @@ const showHeader = ref(true);
 // TODO：优化这个api(放数据模型类 或者 接口文件)
 const api = {
   getUserInfo: "/getUserInfo",
+  loadBoard: "/board/loadBoard",
 };
 
 // 获取滚动条高度 (用于header的行为)
@@ -168,7 +189,22 @@ async function getUserInfo() {
   store.commit("updateLoginUserInfo", result.data);
 }
 
-onMounted(() => initScroll(), getUserInfo());
+// 获取板块信息
+const boardList = ref([]);
+async function loadBoard() {
+  let result = await proxy.Request({
+    url: api.loadBoard,
+  });
+
+  if (!result) return;
+  boardList.value = result.data;
+}
+
+onMounted(() => {
+  initScroll();
+  getUserInfo();
+  loadBoard();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -203,6 +239,10 @@ onMounted(() => initScroll(), getUserInfo());
   }
   .menu-penal {
     flex: 1;
+    .menu-item {
+      cursor: pointer;
+      margin-left: 20px;
+    }
   }
 
   .user-info-penal {
@@ -220,6 +260,23 @@ onMounted(() => initScroll(), getUserInfo());
       margin: 0 25px 0 5px;
       cursor: pointer;
     }
+  }
+}
+.sub-board-list {
+  display: flex;
+  flex-wrap: wrap;
+  .sub-board {
+    padding: 0 10px;
+    border-radius: 20px;
+    margin-right: 10px;
+    margin-top: 5px;
+    background: #ebeaea;
+    border: 1px solid #ddd;
+    color: rgb(109, 108, 108);
+    cursor: pointer;
+  }
+  .sub-board:hover {
+    color: var(--link);
   }
 }
 </style>
