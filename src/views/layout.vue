@@ -12,12 +12,7 @@
             alt="bbs_icon"
             class="bbs_icon"
           />
-          <span
-            v-for="(item, index) in logoInfo"
-            :style="{ color: item.color }"
-            :key="index"
-            >{{ item.letter }}</span
-          >
+          <span class="header_title">BBS</span>
         </router-link>
         <!-- 模块信息 -->
         <div class="menu-penal"></div>
@@ -64,21 +59,6 @@ import Login from "./login.vue";
 const { proxy } = getCurrentInstance();
 const router = useRouter();
 const route = useRoute();
-
-const logoInfo = [
-  {
-    letter: "B",
-    color: "red",
-  },
-  {
-    letter: "B",
-    color: "green",
-  },
-  {
-    letter: "S",
-    color: "blue",
-  },
-];
 
 const showHeader = ref(true);
 
@@ -132,20 +112,22 @@ onMounted(() => initScroll());
   }
 
   &_logo {
-    display: block;
-    margin-right: 5px;
-    text-decoration: none;
-    font-size: 30px;
+    display: flex;
+    align-items: center;
+    .bbs_icon {
+      width: 90px;
+    }
   }
 
+  &_title {
+    font-size: 36px;
+    color: #585858;
+    margin-left: 5px;
+  }
   .menu-penal {
     flex: 1;
   }
-  .bbs_icon {
-    width: 75px;
-    height: 50px;
-    margin-top: 10px;
-  }
+
   .user-info-penal {
     display: flex;
     width: 300px;
