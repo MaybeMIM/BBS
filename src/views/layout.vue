@@ -146,6 +146,17 @@ watch(
   { immediate: true, deep: true }
 );
 
+// 监听是否展示登录框
+watch(
+  () => store.state.showLogin,
+  (newVal, oldVal) => {
+    if (newVal) {
+      loginAndResign(1);
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 // 获取用户信息
 async function getUserInfo() {
   let result = await proxy.Request({

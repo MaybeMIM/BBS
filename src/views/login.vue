@@ -296,8 +296,9 @@ const rules = {
 };
 
 watch(
-  [() => dialogConfig.visible, () => onType.value],
-  ([dialogConfig, onType]) => {
+  () => dialogConfig.visible,
+  (v) => {
+    if (!v) return;
     nextTick(() => {
       resetForm();
     });

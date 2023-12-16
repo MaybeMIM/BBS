@@ -2,6 +2,7 @@ import axios from 'axios'
 import { ElLoading } from 'element-plus'
 import Message from './message'
 import message from './message'
+import store from '@/store'
 
 const instance = axios.create({
   baseURL: '/api',
@@ -45,6 +46,9 @@ instance.interceptors.response.use(
     if (responseDate.code === 200) {
       return responseDate
     } else if (responseDate.code === 901) {
+      // 例如 在一个页面长时间不操作 可能在session会超时 那就要更新用户状态(其若想操作 得先登录)
+      store.commit('showLogin', true)
+      store.commit("updateLoginUserInfo", null);
       // 不显示错误信息 直接弹框
       return Promise.reject({ showError: false, msg: '登录超时' })
     } else {
