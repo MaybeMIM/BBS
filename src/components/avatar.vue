@@ -50,4 +50,8 @@ function jumpPage() {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.avatar {
+  cursor: pointer;
+}
+</style>

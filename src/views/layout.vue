@@ -26,7 +26,40 @@
               搜索<span class="iconfont icon-search"></span>
             </el-button>
           </div>
-          <el-button-group :style="{ 'margin-left': '10px' }">
+          <!-- 显示用户头像以及消息 -->
+          <template v-if="userInfo.userId">
+            <div class="message-info">
+              <el-dropdown>
+                <!-- 🔔 消息按钮与消息数量 -->
+                <el-badge :value="12" class="item">
+                  <div class="iconfont icon-message"></div>
+                </el-badge>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>回复我的</el-dropdown-item>
+                    <el-dropdown-item>赞了我的文章</el-dropdown-item>
+                    <el-dropdown-item>赞了我的评论</el-dropdown-item>
+                    <el-dropdown-item>下载了我的文章</el-dropdown-item>
+                    <el-dropdown-item>系统消息</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+            <div class="user-info">
+              <el-dropdown>
+                <!-- 头像 -->
+                <avatar :userId="userInfo.userId" :width="50"></avatar>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>我的主页</el-dropdown-item>
+                    <el-dropdown-item>退出</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+          </template>
+          <!-- 显示登录注册 -->
+          <el-button-group v-else :style="{ 'margin-left': '10px' }">
             <el-button type="primary" plain @click="loginAndResign(1)"
               >登录</el-button
             >
@@ -48,7 +81,7 @@
 <script setup>
 import {
   ref,
-  reactive,
+  watch,
   getCurrentInstance,
   nextTick,
   computed,
@@ -56,11 +89,17 @@ import {
 } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Login from "./login.vue";
+import store from "@/store";
 const { proxy } = getCurrentInstance();
 const router = useRouter();
 const route = useRoute();
 
 const showHeader = ref(true);
+
+// TODO：优化这个api(放数据模型类 或者 接口文件)
+const api = {
+  getUserInfo: "/getUserInfo",
+};
 
 // 获取滚动条高度 (用于header的行为)
 const getScrollTop = () => {
@@ -91,7 +130,34 @@ const login = ref();
 function loginAndResign(type) {
   login.value.showPanel(type);
 }
-onMounted(() => initScroll());
+
+// 用户信息
+const userInfo = ref({});
+// 监听 登录用户信息
+watch(
+  () => store.state.loginUserInfo,
+  (newVal, oldVal) => {
+    if (newVal !== undefined && newVal !== null) {
+      userInfo.value = newVal;
+    } else {
+      userInfo.value = {};
+    }
+  },
+  { immediate: true, deep: true }
+);
+
+// 获取用户信息
+async function getUserInfo() {
+  let result = await proxy.Request({
+    url: api.getUserInfo,
+  });
+
+  if (!result) return;
+  // 无出错 更新当前用户信息
+  store.commit("updateLoginUserInfo", result.data);
+}
+
+onMounted(() => initScroll(), getUserInfo());
 </script>
 
 <style lang="scss" scoped>
@@ -131,9 +197,17 @@ onMounted(() => initScroll());
   .user-info-penal {
     display: flex;
     width: 300px;
-
+    align-items: center;
     span {
       margin-left: 3px;
+    }
+    .message-info {
+      .icon-message {
+        font-size: 25px;
+        color: rgb(147, 147, 147);
+      }
+      margin: 0 25px 0 5px;
+      cursor: pointer;
     }
   }
 }

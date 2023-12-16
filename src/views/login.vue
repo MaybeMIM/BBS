@@ -217,6 +217,7 @@ import { useRoute, useRouter } from "vue-router";
 import Message from "@/utils/message";
 import Verify from "@/utils/verify";
 import md5 from "js-md5";
+import store from "@/store";
 defineExpose({ showPanel });
 
 const { proxy } = getCurrentInstance();
@@ -446,6 +447,7 @@ function submit() {
       }
       dialogConfig.visible = false;
       Message.success("登录成功!");
+      store.commit("updateLoginUserInfo", result.data);
     } else if (onType.value === 2) {
       // 重置密码
       Message.success("重置成功,请登录");
