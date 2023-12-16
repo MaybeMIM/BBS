@@ -16,16 +16,18 @@ import "@/assets/icon/iconfont.css";
 import Request from "@/utils/request";
 // 全局组件
 import Dialog from "@/components/dialog.vue";
-
+import Avatar from '@/components/avatar.vue'
 const app = createApp(App);
 app.use(router);
 app.use(ElementPlus);
 app.config.globalProperties.VueCookies = VueCookies;
 app.config.globalProperties.globalInfo = {
   bodyWidth: 1300,
+  avatarUrl: '/api/file/getAvatar/'
 };
 app.config.globalProperties.Request = Request
 
 app.component('Dialog', Dialog)
+app.component('Avatar', Avatar)
 
 app.mount("#app");
