@@ -90,7 +90,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="body-content">
       <router-view />
     </div>
     <!-- 登录 注册 -->
@@ -211,6 +211,7 @@ onMounted(() => {
 .header {
   width: 100%;
   height: 60px;
+  top: 0;
   position: fixed;
   box-shadow: 0 2px 6px 0 #50a7d9;
   z-index: 999;
@@ -278,5 +279,9 @@ onMounted(() => {
   .sub-board:hover {
     color: var(--link);
   }
+}
+.body-content {
+  margin-top: 60px;
+  position: relative;
 }
 </style>
