@@ -99,20 +99,10 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  watch,
-  getCurrentInstance,
-  nextTick,
-  computed,
-  onMounted,
-} from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, watch, getCurrentInstance, onMounted } from "vue";
 import Login from "./login.vue";
 import store from "@/store";
 const { proxy } = getCurrentInstance();
-const router = useRouter();
-const route = useRoute();
 
 const showHeader = ref(true);
 

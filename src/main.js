@@ -26,7 +26,10 @@ app.use(ElementPlus);
 app.config.globalProperties.VueCookies = VueCookies;
 app.config.globalProperties.globalInfo = {
   bodyWidth: 1300,
-  avatarUrl: '/api/file/getAvatar/'
+  // 获取头像
+  avatarUrl: '/api/file/getAvatar/',
+  // 获取图片
+  imageUrl: '/api/file/getImage/'
 };
 app.config.globalProperties.Request = Request
 

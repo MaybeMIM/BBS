@@ -22,11 +22,8 @@
 
 <script setup>
 import ArticleListItem from "./article-list-item.vue";
-import { ref, reactive, getCurrentInstance, nextTick, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, getCurrentInstance, onMounted } from "vue";
 const { proxy } = getCurrentInstance();
-const route = useRoute();
-const router = useRouter();
 
 const api = {
   loadArticle: "/forum/loadArticle",

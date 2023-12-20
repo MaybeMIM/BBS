@@ -8,22 +8,24 @@
             {{ data.nickName }}
           </router-link>
           <el-divider direction="vertical"></el-divider>
-          <div class="post-time">{{ data.postTime }}</div>
+          <div class="post-time">
+            {{ data.postTime }}
+          </div>
           <div class="address">&nbsp;·&nbsp;{{ data.userIpAddress }}</div>
           <el-divider direction="vertical"></el-divider>
-          <router-link :to="'/'" class="link-hover">{{
-            data.pBoardName
-          }}</router-link>
+          <router-link :to="'/'" class="link-hover">
+            {{ data.pBoardName }}
+          </router-link>
           <template v-if="data.boardName">
             <span>&nbsp;/&nbsp;</span>
-            <router-link :to="'/'" class="link-hover">{{
-              data.boardName
-            }}</router-link>
+            <router-link :to="'/'" class="link-hover">
+              {{ data.boardName }}
+            </router-link>
           </template>
         </div>
-        <router-link :to="'/'" class="article-title">{{
-          data.title
-        }}</router-link>
+        <router-link :to="'/'" class="article-title">
+          {{ data.title }}
+        </router-link>
         <div class="article-summary">{{ data.summary }}</div>
         <div class="article-info">
           <span class="iconfont icon-eye-solid">
@@ -37,19 +39,14 @@
           </span>
         </div>
       </div>
-      <div class="cover" v-if="data.cover">
-        <img :src="'/api/file/getImage/' + data.cover" />
-      </div>
+
+      <Cover :cover="data.cover" :width="120" v-if="data.cover"></Cover>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
-const { proxy } = getCurrentInstance();
-const route = useRoute();
-const router = useRouter();
+import Cover from "@/components/cover.vue";
 
 const props = defineProps({
   data: {

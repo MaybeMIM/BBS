@@ -67,6 +67,10 @@ instance.interceptors.response.use(
 )
 
 const request = (config) => {
+  // url 可以直接传字符串
+  if (typeof config === 'string') {
+    config = { url: config }
+  }
   const { url, params, dataType, showLoading = true, errorCallback, showError = true } = config
   //  表单(默认) json
   let contentType = contentTypeForm
