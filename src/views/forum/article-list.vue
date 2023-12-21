@@ -5,14 +5,34 @@
   >
     <div class="article-panel">
       <div class="top-tab">
-        <div class="tab-item">热榜</div>
+        <div
+          :class="['tab-item', orderType === 0 ? 'active' : '']"
+          @click="changeOrderType(0)"
+        >
+          热榜
+        </div>
         <el-divider direction="vertical"></el-divider>
-        <div class="tab-item">发布时间</div>
+        <div
+          :class="['tab-item', orderType === 1 ? 'active' : '']"
+          @click="changeOrderType(1)"
+        >
+          发布时间
+        </div>
         <el-divider direction="vertical"></el-divider>
-        <div class="tab-item">最新</div>
+        <div
+          :class="['tab-item', orderType === 2 ? 'active' : '']"
+          @click="changeOrderType(2)"
+        >
+          最新
+        </div>
       </div>
       <div class="article-list">
-        <DataList :dataSource="articleListInfo" @loadData="loadArticle">
+        <DataList
+          :loading="loading"
+          :dataSource="articleListInfo"
+          emptyMsg="没有发现帖子,快来发表第一个帖子吧！"
+          @loadData="loadArticle"
+        >
           <template #default="{ data }">
             <ArticleListItem :data="data" />
           </template>
@@ -32,23 +52,36 @@ const { proxy } = getCurrentInstance();
 const api = {
   loadArticle: "/forum/loadArticle",
 };
-
+// 文章列表
+const loading = ref(false);
+const orderType = ref(0);
 const articleListInfo = ref({});
 
 async function loadArticle() {
+  if (loading.value) return;
+  loading.value = true;
+
   let params = {
     pageNo: articleListInfo.value.pageNo,
     boardId: 0,
+    orderType: orderType.value,
   };
 
   let result = await proxy.Request({
     url: api.loadArticle,
     params,
+    // 有了骨架就不需要遮罩loading
+    showLoading: false,
   });
-
+  loading.value = false;
   if (!result) return;
 
   articleListInfo.value = result.data;
+}
+
+function changeOrderType(type) {
+  orderType.value = type;
+  loadArticle();
 }
 
 onMounted(() => loadArticle());
@@ -66,9 +99,10 @@ onMounted(() => loadArticle());
       border-bottom: 1px solid #000;
       .tab-item {
         color: #c9c9c9;
+        cursor: pointer;
       }
-      .article-list {
-        padding-bottom: 10px;
+      .active {
+        color: #007bff;
       }
     }
   }
