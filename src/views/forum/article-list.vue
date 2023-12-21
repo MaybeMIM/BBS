@@ -12,19 +12,23 @@
         <div class="tab-item">最新</div>
       </div>
       <div class="article-list">
-        <div v-for="item in articleListInfo.list">
-          <ArticleListItem :data="item" />
-        </div>
+        <DataList :dataSource="articleListInfo" @loadData="loadArticle">
+          <template #default="{ data }">
+            <ArticleListItem :data="data" />
+          </template>
+        </DataList>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import DataList from "@/components/data-list.vue";
 import ArticleListItem from "./article-list-item.vue";
 import { ref, getCurrentInstance, onMounted } from "vue";
 const { proxy } = getCurrentInstance();
 
+// TODO: 优化API
 const api = {
   loadArticle: "/forum/loadArticle",
 };
@@ -32,11 +36,14 @@ const api = {
 const articleListInfo = ref({});
 
 async function loadArticle() {
+  let params = {
+    pageNo: articleListInfo.value.pageNo,
+    boardId: 0,
+  };
+
   let result = await proxy.Request({
     url: api.loadArticle,
-    // params: {
-    //   boardId: 0,
-    // },
+    params,
   });
 
   if (!result) return;
@@ -59,6 +66,9 @@ onMounted(() => loadArticle());
       border-bottom: 1px solid #000;
       .tab-item {
         color: #c9c9c9;
+      }
+      .article-list {
+        padding-bottom: 10px;
       }
     }
   }

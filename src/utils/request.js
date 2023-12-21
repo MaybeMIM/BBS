@@ -35,6 +35,8 @@ instance.interceptors.request.use((config) => {
 // 请求后过滤器
 instance.interceptors.response.use(
   (response) => {
+    // 打印请求回来的数据和请求地址
+    console.log(`Response: ${response.config.url}`);
     // 发送错误时的回调(用于登录账号密码错误 需刷新验证码) 错误信息默认显示
     const { showLoading, errorCallback, showError } = response.config
     if (showLoading && loading) {
@@ -42,7 +44,7 @@ instance.interceptors.response.use(
       loading.close()
     }
     const responseDate = response.data
-
+    console.log(responseDate);
     if (responseDate.code === 200) {
       return responseDate
     } else if (responseDate.code === 901) {
