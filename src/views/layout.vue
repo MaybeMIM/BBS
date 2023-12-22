@@ -6,7 +6,6 @@
         :style="{ width: proxy.globalInfo.bodyWidth + 'px' }"
       >
         <router-link to="/" class="header_logo">
-          <!-- TODO:优化一下 用图标svg -->
           <img
             src="../assets/bbs_nav_icon.svg"
             alt="bbs_icon"
@@ -16,7 +15,7 @@
         </router-link>
         <!-- 模块信息 -->
         <div class="menu-penal">
-          <span class="menu-item">全部</span>
+          <span class="menu-item" to="/">首页</span>
           <template v-for="board in boardList">
             <el-popover
               placement="bottom-start"
@@ -25,15 +24,23 @@
               v-if="board.children.length > 0"
             >
               <template #reference>
-                <span class="menu-item">{{ board.boardName }}</span>
-              </template>
-              <div class="sub-board-list">
-                <span class="sub-board" v-for="subBoard in board.children">{{
-                  subBoard.boardName
+                <span class="menu-item" @click="boardClickHandler(board)">{{
+                  board.boardName
                 }}</span>
+              </template>
+              <!-- 二级板块 -->
+              <div class="sub-board-list">
+                <span
+                  class="sub-board"
+                  v-for="subBoard in board.children"
+                  @click="subBoardClickHandle(subBoard)"
+                  >{{ subBoard.boardName }}</span
+                >
               </div>
             </el-popover>
-            <span class="menu-item" v-else>{{ board.boardName }}</span>
+            <span class="menu-item" v-else @click="boardClickHandler(board)">{{
+              board.boardName
+            }}</span>
           </template>
         </div>
         <!-- 登录注册 / 用户信息 -->
@@ -99,18 +106,15 @@
 </template>
 
 <script setup>
+import { getUserInfos, loadBoardList } from "@/model/api";
 import { ref, watch, getCurrentInstance, onMounted } from "vue";
 import Login from "./login.vue";
 import store from "@/store";
+import { useRouter } from "vue-router";
 const { proxy } = getCurrentInstance();
 
+const router = useRouter();
 const showHeader = ref(true);
-
-// TODO：优化这个api(放数据模型类 或者 接口文件)
-const api = {
-  getUserInfo: "/getUserInfo",
-  loadBoard: "/board/loadBoard",
-};
 
 // 获取滚动条高度 (用于header的行为)
 const getScrollTop = () => {
@@ -170,9 +174,7 @@ watch(
 
 // 获取用户信息
 async function getUserInfo() {
-  let result = await proxy.Request({
-    url: api.getUserInfo,
-  });
+  let result = await getUserInfos();
 
   if (!result) return;
   // 无出错 更新当前用户信息
@@ -182,14 +184,19 @@ async function getUserInfo() {
 // 获取板块信息
 const boardList = ref([]);
 async function loadBoard() {
-  let result = await proxy.Request({
-    url: api.loadBoard,
-  });
+  let result = await loadBoardList();
 
   if (!result) return;
   boardList.value = result.data;
 }
 
+// 点击板块事件
+function boardClickHandler(board) {
+  router.push(`/forum/${board.boardId}`);
+}
+function subBoardClickHandle(subBoard) {
+  router.push(`/forum/${subBoard.pBoardId}/${subBoard.boardId}`);
+}
 onMounted(() => {
   initScroll();
   getUserInfo();

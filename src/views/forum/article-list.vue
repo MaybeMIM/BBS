@@ -43,19 +43,31 @@
 </template>
 
 <script setup>
+import { loadArticleList } from "@/model/api";
 import DataList from "@/components/data-list.vue";
 import ArticleListItem from "./article-list-item.vue";
-import { ref, getCurrentInstance, onMounted } from "vue";
+import { ref, getCurrentInstance, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 const { proxy } = getCurrentInstance();
 
-// TODO: 优化API
-const api = {
-  loadArticle: "/forum/loadArticle",
-};
+const route = useRoute();
 // 文章列表
 const loading = ref(false);
 const orderType = ref(0);
 const articleListInfo = ref({});
+
+const pBoardId = ref(0); // 一级板块
+const boardId = ref(0); // 二级板块
+watch(
+  // 监听路由参数
+  () => route.params,
+  (newVal, oldVal) => {
+    pBoardId.value = newVal.pBoardId;
+    boardId.value = newVal.boardId;
+    loadArticle();
+  },
+  { immediate: true, deep: true }
+);
 
 async function loadArticle() {
   if (loading.value) return;
@@ -63,16 +75,14 @@ async function loadArticle() {
 
   let params = {
     pageNo: articleListInfo.value.pageNo,
-    boardId: 0,
+    pBoardId: pBoardId.value,
+    boardId: boardId.value,
     orderType: orderType.value,
   };
 
-  let result = await proxy.Request({
-    url: api.loadArticle,
-    params,
-    // 有了骨架就不需要遮罩loading
-    showLoading: false,
-  });
+  // 有了骨架就不需要遮罩loading
+  let result = await loadArticleList(params, false);
+
   loading.value = false;
   if (!result) return;
 
