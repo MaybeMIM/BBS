@@ -1,6 +1,5 @@
 <template>
-  <!-- TODO:BUG 请求回来的数据比组件挂载的慢  && dataSource.list.length === 0-->
-  <div v-if="!loading && dataSource.list !== null">
+  <div v-if="!loading && list !== null && list.length === 0">
     <EmptyData :msg="emptyMsg"></EmptyData>
   </div>
 
@@ -9,7 +8,7 @@
     <el-skeleton :row="2" animated></el-skeleton>
   </div>
   <!-- 数据列表 -->
-  <div v-for="item in dataSource.list" v-else>
+  <div v-for="item in list" v-else>
     <!-- 返回一个插槽 -->
     <slot :data="item"></slot>
   </div>
@@ -28,6 +27,7 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import EmptyData from "./empty-data.vue";
 const props = defineProps({
   dataSource: {
@@ -42,7 +42,10 @@ const props = defineProps({
   },
 });
 
+// 因为是异步请求回来的数据 请求回来的数据比组件挂载的慢  (BUG: && dataSource.list.length === 0) 所以要定义一个list去代替
+const list = computed(()=> Array.isArray(props.dataSource.list) ? props.dataSource.list : [])
 const emit = defineEmits(["loadData"]);
+
 function handlePageNoChange(pageNo) {
   props.dataSource.pageNo = pageNo;
   emit("loadData");
