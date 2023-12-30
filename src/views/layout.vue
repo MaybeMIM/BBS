@@ -24,23 +24,37 @@
               v-if="board.children.length > 0"
             >
               <template #reference>
-                <span class="menu-item" @click="boardClickHandler(board)">{{
-                  board.boardName
-                }}</span>
+                <span
+                  :class="[
+                    'menu-item',
+                    board.boardId == activePBoardId ? 'active' : ''
+                  ]"
+                  @click="boardClickHandler(board)"
+                  >{{ board.boardName }}</span
+                >
               </template>
               <!-- 二级板块 -->
               <div class="sub-board-list">
                 <span
-                  class="sub-board"
+                  :class="[
+                    'sub-board',
+                    subBoard.boardId == activeBoardId ? 'active' : ''
+                  ]"
                   v-for="subBoard in board.children"
                   @click="subBoardClickHandle(subBoard)"
                   >{{ subBoard.boardName }}</span
                 >
               </div>
             </el-popover>
-            <span class="menu-item" v-else @click="boardClickHandler(board)">{{
-              board.boardName
-            }}</span>
+            <span
+              :class="[
+                'menu-item',
+                board.boardId == activePBoardId ? 'active' : ''
+              ]"
+              v-else
+              @click="boardClickHandler(board)"
+              >{{ board.boardName }}</span
+            >
           </template>
         </div>
         <!-- 登录注册 / 用户信息 -->
@@ -106,102 +120,125 @@
 </template>
 
 <script setup>
-import { getUserInfos, loadBoardList } from "@/model/api";
-import { ref, watch, getCurrentInstance, onMounted } from "vue";
-import Login from "./login.vue";
-import store from "@/store";
-import { useRouter } from "vue-router";
-const { proxy } = getCurrentInstance();
+import { getUserInfos, loadBoardList } from '@/model/api'
+import { ref, watch, getCurrentInstance, onMounted } from 'vue'
+import Login from './login.vue'
+import store from '@/store'
+import { useRouter } from 'vue-router'
+const { proxy } = getCurrentInstance()
 
-const router = useRouter();
-const showHeader = ref(true);
+const router = useRouter()
+const showHeader = ref(true)
 
 // 获取滚动条高度 (用于header的行为)
 const getScrollTop = () => {
-  return document.documentElement.scrollTop || document.body.scrollTop;
-};
-function initScroll() {
-  let initScrollTop = getScrollTop();
-  let scrollType = 0;
-  window.addEventListener("scroll", () => {
-    let currentScrollTop = getScrollTop();
+  return document.documentElement.scrollTop || document.body.scrollTop
+}
+function initScroll () {
+  let initScrollTop = getScrollTop()
+  let scrollType = 0
+  window.addEventListener('scroll', () => {
+    let currentScrollTop = getScrollTop()
     if (currentScrollTop > initScrollTop) {
       // 往下滚动
-      scrollType = 1;
+      scrollType = 1
     } else {
-      scrollType = 0;
+      scrollType = 0
     }
-    initScrollTop = currentScrollTop;
+    initScrollTop = currentScrollTop
     if (scrollType === 1 && currentScrollTop > 150) {
-      showHeader.value = false;
+      showHeader.value = false
     } else {
-      showHeader.value = true;
+      showHeader.value = true
     }
-  });
+  })
 }
 
 // 登录 注册
-const login = ref();
-function loginAndResign(type) {
-  login.value.showPanel(type);
+const login = ref()
+function loginAndResign (type) {
+  login.value.showPanel(type)
 }
 
 // 用户信息
-const userInfo = ref({});
+const userInfo = ref({})
 // 监听 登录用户信息
 watch(
   () => store.state.loginUserInfo,
   (newVal, oldVal) => {
     if (newVal !== undefined && newVal !== null) {
-      userInfo.value = newVal;
+      userInfo.value = newVal
     } else {
-      userInfo.value = {};
+      userInfo.value = {}
     }
   },
   { immediate: true, deep: true }
-);
+)
 
 // 监听是否展示登录框
 watch(
   () => store.state.showLogin,
   (newVal, oldVal) => {
     if (newVal) {
-      loginAndResign(1);
+      loginAndResign(1)
     }
   },
   { immediate: true, deep: true }
-);
+)
 
 // 获取用户信息
-async function getUserInfo() {
-  let result = await getUserInfos();
+async function getUserInfo () {
+  let result = await getUserInfos()
 
-  if (!result) return;
+  if (!result) return
   // 无出错 更新当前用户信息
-  store.commit("updateLoginUserInfo", result.data);
+  store.commit('updateLoginUserInfo', result.data)
 }
 
 // 获取板块信息
-const boardList = ref([]);
-async function loadBoard() {
-  let result = await loadBoardList();
+const boardList = ref([])
+async function loadBoard () {
+  let result = await loadBoardList()
 
-  if (!result) return;
-  boardList.value = result.data;
+  if (!result) return
+  boardList.value = result.data
+  // 保存板块列表 用于后续展示二级板块
+  store.commit('saveBoardList', result.data)
 }
 
 // 点击板块事件
-function boardClickHandler(board) {
-  router.push(`/forum/${board.boardId}`);
+function boardClickHandler (board) {
+  router.push(`/forum/${board.boardId}`)
 }
-function subBoardClickHandle(subBoard) {
-  router.push(`/forum/${subBoard.pBoardId}/${subBoard.boardId}`);
+function subBoardClickHandle (subBoard) {
+  router.push(`/forum/${subBoard.pBoardId}/${subBoard.boardId}`)
 }
+
+// 当前选中的板块
+const activePBoardId = ref(0)
+const activeBoardId = ref(0)
+watch(
+  () => store.state.activePBoardId,
+  newVal => {
+    if (newVal !== undefined) {
+      activePBoardId.value = newVal
+    }
+  },
+  { immediate: true, deep: true }
+)
+watch(
+  () => store.state.activeBoardId,
+  newVal => {
+    activeBoardId.value = newVal
+  },
+  { immediate: true, deep: true }
+)
+
 onMounted(() => {
-  initScroll();
-  getUserInfo();
-  loadBoard();
-});
+  initScroll()
+  getUserInfo()
+  loadBoard()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -239,7 +276,16 @@ onMounted(() => {
     flex: 1;
     .menu-item {
       cursor: pointer;
+      padding: 5px 15px;
+      border-radius: 15px;
       margin-left: 20px;
+    }
+    .active {
+      background: var(--link);
+      color: #fff;
+      &:hover {
+        color: #fff;
+      }
     }
   }
 
@@ -275,6 +321,13 @@ onMounted(() => {
   }
   .sub-board:hover {
     color: var(--link);
+  }
+  .active {
+    background: var(--link);
+    color: #fff;
+    &:hover {
+      color: #fff;
+    }
   }
 }
 .body-content {
