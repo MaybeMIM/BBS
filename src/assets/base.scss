@@ -6,52 +6,55 @@
   padding: 0;
   font-weight: normal;
 }
+
 // 滚动条
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track{
+::-webkit-scrollbar-track {
   background: rgb(239, 239, 239);
   border-radius: 2px;
 }
 
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   background: #bfbfbf;
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover{
+::-webkit-scrollbar-thumb:hover {
   background: #bfbfbf;
 }
 
-::-webkit-scrollbar-corner{
+::-webkit-scrollbar-corner {
   background: #bfbfbf;
 }
 
-:root{
-  --link:#007bff
+:root {
+  --link: #007bff;
 }
+
 @import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@500&family=Roboto:wght@500;700&display=swap');
+
 body {
   min-height: 100vh;
   background: linear-gradient(to bottom, #2b5876, #4e4376);
 
-  transition:
-    color 0.5s,
-    background-color 0.5s;
+  transition: all 0.5s;
   line-height: 1.6;
-  font-family:'Roboto',sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-a{
+
+a {
   text-decoration: none;
   color: var(--link);
 }
+
 .container-body {
   margin: 0 auto;
   padding-top: 5px;

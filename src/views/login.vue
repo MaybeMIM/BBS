@@ -211,211 +211,211 @@ import {
   getCurrentInstance,
   watch,
   nextTick,
-  computed,
-} from "vue";
-import { useRoute, useRouter } from "vue-router";
-import Message from "@/utils/message";
-import Verify from "@/utils/verify";
-import md5 from "js-md5";
-import store from "@/store";
-defineExpose({ showPanel });
+  computed
+} from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import Message from '@/utils/message'
+import Verify from '@/utils/verify'
+import md5 from 'js-md5'
+import store from '@/store'
+defineExpose({ showPanel })
 
-const { proxy } = getCurrentInstance();
-const route = useRoute();
-const router = useRouter();
+const { proxy } = getCurrentInstance()
+const route = useRoute()
+const router = useRouter()
 // 0：注册 1：登录 2：找回密码
-const onType = ref();
+const onType = ref()
 
-const formData = ref({});
-const form = ref();
+const formData = ref({})
+const form = ref()
 // 邮箱验证码
-const codeFormDate = ref({});
-const codeForm = ref();
+const codeFormDate = ref({})
+const codeForm = ref()
 
 // 登录注册弹框
 const dialogConfig = reactive({
-  visible: false,
-});
+  visible: false
+})
 // 发生邮箱验证码弹框
 const SendMailCode = reactive({
   visible: false,
-  title: "发生邮箱验证码",
+  title: '发生邮箱验证码',
   buttons: [
     {
-      type: "primary",
-      text: "发生验证码",
+      type: 'primary',
+      text: '发生验证码',
       click: () => {
-        sendEmailCode();
-      },
-    },
-  ],
-});
+        sendEmailCode()
+      }
+    }
+  ]
+})
 
 // TODO：优化这个api(放数据模型类 或者 接口文件)
 const api = {
-  checkCode: "/api/checkCode", // 图片验证码
-  sendEmailCode: "/sendEmailCode", // 邮箱验证码
-  register: "/register",
-  login: "/login",
-  resetPwd: "/resetPwd", //重置密码
-};
+  checkCode: '/api/checkCode', // 图片验证码
+  sendEmailCode: '/sendEmailCode', // 邮箱验证码
+  register: '/register',
+  login: '/login',
+  resetPwd: '/resetPwd' //重置密码
+}
 
 const title = computed(() => {
   if (onType.value === 0) {
-    return "注册";
+    return '注册'
   } else if (onType.value === 1) {
-    return "登录";
+    return '登录'
   } else {
-    return "重置密码";
+    return '重置密码'
   }
-});
+})
 
 const rules = {
   email: [
-    { required: true, message: "请输入邮箱" },
-    { validator: Verify.email, message: "请输入正确的邮箱" },
+    { required: true, message: '请输入邮箱' },
+    { validator: Verify.email, message: '请输入正确的邮箱' }
   ],
-  password: { required: true, message: "请输入密码" },
-  emailCode: { required: true, message: "请输入邮箱验证码" },
-  nickName: { required: true, message: "请输入昵称" },
+  password: { required: true, message: '请输入密码' },
+  emailCode: { required: true, message: '请输入邮箱验证码' },
+  nickName: { required: true, message: '请输入昵称' },
   registerPassword: [
-    { required: true, message: "请输入密码" },
+    { required: true, message: '请输入密码' },
     {
       validator: Verify.password,
-      message: "密码只能是数字、字母、特殊字符, 8-16位",
-    },
+      message: '密码只能是数字、字母、特殊字符, 8-16位'
+    }
   ],
   reRegisterPassword: [
-    { required: true, message: "请再次输入密码" },
+    { required: true, message: '请再次输入密码' },
     {
       validator: checkRePassword,
-      message: "两次输入的密码不一致",
-    },
+      message: '两次输入的密码不一致'
+    }
   ],
-  checkCode: { required: true, message: "请输入图片验证码" },
-};
+  checkCode: { required: true, message: '请输入图片验证码' }
+}
 
 watch(
   () => dialogConfig.visible,
-  (v) => {
-    if (!v) return;
+  v => {
+    if (!v) return
     nextTick(() => {
-      resetForm();
-    });
+      resetForm()
+    })
   }
-);
+)
 
 // 验证码
-const checkCodeUrl = ref(api.checkCode);
-const checkCodeUrl4SendMailCode = ref(api.checkCode);
+const checkCodeUrl = ref(api.checkCode)
+const checkCodeUrl4SendMailCode = ref(api.checkCode)
 
-function changeCheckCode(type) {
+function changeCheckCode (type) {
   if (type === 0) {
     checkCodeUrl.value =
-      api.checkCode + "?type=" + type + "&time=" + new Date().getTime();
+      api.checkCode + '?type=' + type + '&time=' + new Date().getTime()
   } else {
     // 区分邮箱验证码和登录注册的验证码
     checkCodeUrl4SendMailCode.value =
-      api.checkCode + "?type=" + type + "&time=" + new Date().getTime();
+      api.checkCode + '?type=' + type + '&time=' + new Date().getTime()
   }
 }
 
-function showPanel(type) {
-  onType.value = type;
-  dialogConfig.visible = true;
+function showPanel (type) {
+  onType.value = type
+  dialogConfig.visible = true
 }
 
-function getEmailCode() {
+function getEmailCode () {
   // 先验证是否输入邮箱 再允许打开邮箱验证码弹框
-  form.value.validateField("email", (valid) => {
-    if (!valid) return;
-    SendMailCode.visible = true;
+  form.value.validateField('email', valid => {
+    if (!valid) return
+    SendMailCode.visible = true
 
     nextTick(() => {
-      changeCheckCode(1);
-      codeForm.value.resetFields();
-      codeFormDate.value.email = formData.value.email;
-    });
-  });
+      changeCheckCode(1)
+      codeForm.value.resetFields()
+      codeFormDate.value.email = formData.value.email
+    })
+  })
 }
 
 // 验证二次输入密码
-function checkRePassword(rule, value, cb) {
+function checkRePassword (rule, value, cb) {
   if (value !== formData.value.registerPassword) {
-    cb(new Error(rule.message));
+    cb(new Error(rule.message))
   } else {
-    cb();
+    cb()
   }
 }
 
 // 发送邮箱验证码
-function sendEmailCode() {
-  codeForm.value.validate(async (valid) => {
-    if (!valid) return;
+function sendEmailCode () {
+  codeForm.value.validate(async valid => {
+    if (!valid) return
 
-    const params = Object.assign({}, codeFormDate.value);
-    params.type = onType.value === 0 ? 0 : 1; // 0:注册 1:找回密码
+    const params = Object.assign({}, codeFormDate.value)
+    params.type = onType.value === 0 ? 0 : 1 // 0:注册 1:找回密码
     let result = await proxy.Request({
       url: api.sendEmailCode,
       params,
       errorCallback: () => {
-        changeCheckCode(1);
-      },
-    });
-    if (!result) return;
-    Message.success("验证发送成功,请登录邮箱查看");
-    SendMailCode.visible = false;
-  });
+        changeCheckCode(1)
+      }
+    })
+    if (!result) return
+    Message.success('验证发送成功,请登录邮箱查看')
+    SendMailCode.visible = false
+  })
 }
 
-function resetForm() {
+function resetForm () {
   // 因为需要判断是否选中 记住我 得另起一个函数 不能把逻辑放在watch里
   nextTick(() => {
     // 重置验证码 (防止输入正确的验证码却出错的情况) / 重置表单
-    changeCheckCode(0);
-    form.value.resetFields();
-    formData.value = {};
+    changeCheckCode(0)
+    form.value.resetFields()
+    formData.value = {}
 
     // 登录
     if (onType.value === 1) {
-      const cookiesLoginInfo = proxy.VueCookies.get("loginInfo");
+      const cookiesLoginInfo = proxy.VueCookies.get('loginInfo')
       if (cookiesLoginInfo) {
-        formData.value = cookiesLoginInfo;
+        formData.value = cookiesLoginInfo
       }
     }
-  });
+  })
 }
 
 // 登录 注册 重置密码 提交表单
-function submit() {
-  form.value.validate(async (valid) => {
-    if (!valid) return;
-    let params = {};
-    Object.assign(params, formData.value);
+function submit () {
+  form.value.validate(async valid => {
+    if (!valid) return
+    let params = {}
+    Object.assign(params, formData.value)
 
     if (onType.value === 0 || onType.value === 2) {
-      params.password = params.reRegisterPassword;
-      delete params.registerPassword;
-      delete params.reRegisterPassword;
+      params.password = params.reRegisterPassword
+      delete params.registerPassword
+      delete params.reRegisterPassword
     }
     // 登录 如果登录过 就取cookie的信息
     if (onType.value === 1) {
-      let cookiesLoginInfo = proxy.VueCookies.get("loginInfo");
+      let cookiesLoginInfo = proxy.VueCookies.get('loginInfo')
       let cookiesPassword =
-        cookiesLoginInfo === null ? null : cookiesLoginInfo.password;
+        cookiesLoginInfo === null ? null : cookiesLoginInfo.password
 
       if (params.password !== cookiesPassword) {
-        params.password = md5(params.password);
+        params.password = md5(params.password)
       }
     }
 
-    let url = null;
+    let url = null
     if (onType.value === 0) {
-      url = api.register;
+      url = api.register
     } else if (onType.value === 1) {
-      url = api.login;
+      url = api.login
     } else if (onType.value === 2) {
-      url = api.resetPwd;
+      url = api.resetPwd
     }
 
     let result = await proxy.Request({
@@ -423,38 +423,38 @@ function submit() {
       params,
       errorCallback: () => {
         // 刷新验证码
-        changeCheckCode(0);
-      },
-    });
+        changeCheckCode(0)
+      }
+    })
 
     // 有问题直接 return
-    if (!result) return;
+    if (!result) return
 
     // 注册返回
     if (onType.value === 0) {
-      Message.success("注册成功,请登录");
-      showPanel(1);
+      Message.success('注册成功,请登录')
+      showPanel(1)
     } else if (onType.value === 1) {
       // 登录 点了记住我
       if (params.rememberMe) {
         const loginInfo = {
           email: params.email,
           password: params.password,
-          rememberMe: params.rememberMe,
-        };
-        proxy.VueCookies.set("loginInfo", loginInfo, "3d");
+          rememberMe: params.rememberMe
+        }
+        proxy.VueCookies.set('loginInfo', loginInfo, '3d')
       } else {
-        proxy.VueCookies.remove("loginInfo");
+        proxy.VueCookies.remove('loginInfo')
       }
-      dialogConfig.visible = false;
-      Message.success("登录成功!");
-      store.commit("updateLoginUserInfo", result.data);
+      dialogConfig.visible = false
+      Message.success('登录成功!')
+      store.commit('updateLoginUserInfo', result.data)
     } else if (onType.value === 2) {
       // 重置密码
-      Message.success("重置成功,请登录");
-      showPanel(1);
+      Message.success('重置成功,请登录')
+      showPanel(1)
     }
-  });
+  })
 }
 </script>
 

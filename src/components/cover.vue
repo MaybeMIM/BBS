@@ -11,21 +11,21 @@
 </template>
 
 <script setup>
-import { getCurrentInstance } from "vue";
-const { proxy } = getCurrentInstance();
+import { getCurrentInstance } from 'vue'
+const { proxy } = getCurrentInstance()
 
 const props = defineProps({
   // 图片地址
   cover: {
-    type: String,
+    type: String
   },
   width: {
     type: Number,
-    default: 60,
-  },
-});
+    default: 60
+  }
+})
 
-const localCover = new URL("@/assets/default_cover.jpg", import.meta.url).href;
+const localCover = new URL('@/assets/default_cover.jpg', import.meta.url).href
 </script>
 
 <style lang="scss">

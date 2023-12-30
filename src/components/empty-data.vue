@@ -9,9 +9,9 @@
 // 显示暂无数据组件
 const props = defineProps({
   msg: {
-    type: String,
-  },
-});
+    type: String
+  }
+})
 </script>
 
 <style lang="scss">

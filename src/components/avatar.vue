@@ -4,7 +4,7 @@
     :style="{
       width: width + 'px',
       height: width + 'px',
-      'border-radius': width / 2 + 'px',
+      'border-radius': width / 2 + 'px'
     }"
   >
     <el-image
@@ -12,7 +12,7 @@
       :style="{
         width: width + 'px',
         height: width + 'px',
-        'border-radius': width / 2 + 'px',
+        'border-radius': width / 2 + 'px'
       }"
       :src="proxy.globalInfo.avatarUrl + userId"
       fit="scale-down"
@@ -24,28 +24,28 @@
 </template>
 
 <script setup>
-import { getCurrentInstance } from "vue";
-import { useRoute, useRouter } from "vue-router";
-const { proxy } = getCurrentInstance();
-const router = useRouter();
+import { getCurrentInstance } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+const { proxy } = getCurrentInstance()
+const router = useRouter()
 
 const props = defineProps({
   userId: {
-    type: String,
+    type: String
   },
   width: {
     type: Number,
-    default: 60,
+    default: 60
   },
   addLink: {
     type: Boolean,
-    default: true,
-  },
-});
+    default: true
+  }
+})
 
-function jumpPage() {
+function jumpPage () {
   if (props.addLink) {
-    router.push("/user/" + proxy.userId);
+    router.push('/user/' + proxy.userId)
   }
 }
 </script>

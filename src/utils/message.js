@@ -1,6 +1,5 @@
 // message组件
-import { ElMessage } from "element-plus";
-
+import { ElMessage } from 'element-plus'
 
 const message = {
   success: (msg, cb) => {
@@ -14,7 +13,7 @@ const message = {
   }
 }
 
-function showMessage(msg, cb, type) {
+function showMessage (msg, cb, type) {
   ElMessage({
     type: type,
     message: msg,

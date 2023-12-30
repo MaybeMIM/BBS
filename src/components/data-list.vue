@@ -27,28 +27,30 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import EmptyData from "./empty-data.vue";
+import { computed } from 'vue'
+import EmptyData from './empty-data.vue'
 const props = defineProps({
   dataSource: {
-    type: Object,
+    type: Object
   },
   loading: {
-    type: Boolean,
+    type: Boolean
   },
   emptyMsg: {
     type: String,
-    default: "空空如也",
-  },
-});
+    default: '空空如也'
+  }
+})
 
 // 因为是异步请求回来的数据 请求回来的数据比组件挂载的慢  (BUG: && dataSource.list.length === 0) 所以要定义一个list去代替
-const list = computed(()=> Array.isArray(props.dataSource.list) ? props.dataSource.list : [])
-const emit = defineEmits(["loadData"]);
+const list = computed(() =>
+  Array.isArray(props.dataSource.list) ? props.dataSource.list : []
+)
+const emit = defineEmits(['loadData'])
 
-function handlePageNoChange(pageNo) {
-  props.dataSource.pageNo = pageNo;
-  emit("loadData");
+function handlePageNoChange (pageNo) {
+  props.dataSource.pageNo = pageNo
+  emit('loadData')
 }
 </script>
 

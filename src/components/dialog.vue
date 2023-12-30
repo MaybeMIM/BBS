@@ -35,34 +35,34 @@
 const props = defineProps({
   visible: {
     type: Boolean,
-    default: false,
+    default: false
   },
   title: {
     type: String,
-    default: "标题",
+    default: '标题'
   },
   showClose: {
     type: Boolean,
-    default: true,
+    default: true
   },
   width: {
     type: String,
-    default: "30%",
+    default: '30%'
   },
   top: {
-    type: String,
+    type: String
   },
   buttons: {
-    type: Array,
+    type: Array
   },
   showCancel: {
     type: Boolean,
-    default: true,
-  },
-});
-const emit = defineEmits(["close"]);
-function close() {
-  emit("close");
+    default: true
+  }
+})
+const emit = defineEmits(['close'])
+function close () {
+  emit('close')
 }
 </script>
 
