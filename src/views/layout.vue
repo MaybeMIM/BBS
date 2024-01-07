@@ -15,7 +15,14 @@
         </router-link>
         <!-- 模块信息 -->
         <div class="menu-penal">
-          <span class="menu-item" to="/">首页</span>
+          <router-link
+            :class="[
+              'menu-item home',
+              activePBoardId == undefined ? 'active' : ''
+            ]"
+            to="/"
+            >首页</router-link
+          >
           <template v-for="board in boardList">
             <el-popover
               placement="bottom-start"
@@ -220,7 +227,7 @@ const activeBoardId = ref(0)
 watch(
   () => store.state.activePBoardId,
   newVal => {
-    if (newVal !== undefined) {
+    if (newVal !== 0) {
       activePBoardId.value = newVal
     }
   },
@@ -279,6 +286,10 @@ onMounted(() => {
       padding: 5px 15px;
       border-radius: 15px;
       margin-left: 20px;
+      background: #c9c9c9;
+    }
+    .home {
+      color: #000;
     }
     .active {
       background: var(--link);

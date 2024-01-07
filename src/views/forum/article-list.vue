@@ -174,7 +174,7 @@ onMounted(() => loadArticle())
     .top-tab {
       display: flex;
       align-items: center;
-      padding: 10px;
+      padding: 10px 15px;
       font-size: 15px;
       border-bottom: 1px solid #000;
 

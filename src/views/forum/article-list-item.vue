@@ -13,18 +13,22 @@
           </div>
           <div class="address">&nbsp;·&nbsp;{{ data.userIpAddress }}</div>
           <el-divider direction="vertical"></el-divider>
-          <router-link :to="'/'" class="link-hover">
+          <router-link :to="`/forum/${data.pBoardId}`" class="link-hover">
             {{ data.pBoardName }}
           </router-link>
           <template v-if="data.boardName">
             <span>&nbsp;/&nbsp;</span>
-            <router-link :to="'/'" class="link-hover">
+            <router-link
+              :to="`/forum/${data.pBoardId}/${data.boardId}`"
+              class="link-hover"
+            >
               {{ data.boardName }}
             </router-link>
           </template>
         </div>
-        <router-link :to="'/'" class="article-title">
-          {{ data.title }}
+        <router-link :to="`/post/${data.articleId}`" class="article-title">
+          <span v-if="data.topType === 1" class="top">置顶</span>
+          <span>{{ data.title }}</span>
         </router-link>
         <div class="article-summary">{{ data.summary }}</div>
         <div class="article-info">
@@ -40,7 +44,9 @@
         </div>
       </div>
 
-      <Cover :cover="data.cover" :width="120" v-if="data.cover"></Cover>
+      <router-link :to="`/post/${data.articleId}`"
+        ><Cover :cover="data.cover" :width="120" v-if="data.cover"></Cover
+      ></router-link>
     </div>
   </div>
 </template>
@@ -58,10 +64,10 @@ const props = defineProps({
 <style lang="scss">
 // TODO:文章模块颜色与背景颜色可能需要调试合适
 .article-item {
-  padding: 5px 10px 0 10px;
+  padding: 5px 10px 0 15px;
   .article-item-inner {
     display: flex;
-    padding: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid #aaa;
     .article-body {
       flex: 1;
@@ -88,6 +94,14 @@ const props = defineProps({
         font-size: 16px;
         margin: 10px 0px;
         color: #03a3ff;
+        .top {
+          font-size: 12px;
+          padding: 3px 5px;
+          color: var(--pink);
+          border-radius: 3px;
+          margin-right: 10px;
+          border: 1px solid var(--pink);
+        }
       }
       .article-summary {
         font-size: 14px;
