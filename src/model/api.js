@@ -19,3 +19,18 @@ export function loadBoardList (params) {
 export function getArticleDetail (params) {
   return Request({ url: '/forum/getArticleDetail', params })
 }
+
+// 点赞
+export function doLike (params) {
+  return Request({ url: '/forum/doLike', params })
+}
+
+// 获取用户积分
+export function getUserIntegral (params) {
+  return Request({ url: '/forum/getUserDownloadInfo', params })
+}
+
+// 附件下载
+export function attachmentDownload () {
+  return Request({ url: '/forum/attachmentDownload' })
+}

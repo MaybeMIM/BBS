@@ -66,11 +66,45 @@
               已下载{{ attachment.downloadCount }}
             </div>
             <div class="download-btn item">
-              <el-button type="primary" size="small">下载</el-button>
+              <el-button
+                type="primary"
+                size="small"
+                @click="downloadAttachment(attachment.fileId)"
+                >下载</el-button
+              >
             </div>
           </div>
         </div>
+        <!-- 评论 -->
+        <div class="comment-panel" id="view-comment"></div>
       </div>
+    </div>
+  </div>
+  <!-- 左侧快捷操作 点赞、评论、附件-->
+  <div class="quick-panel" :style="{ left: quickPanelLeft + 'px' }">
+    <!-- 点赞 -->
+    <el-badge
+      :value="articleInfo.goodCount"
+      type="info"
+      :hidden="!articleInfo.goodCount > 0"
+    >
+      <div class="quick-item" @click="handleLike">
+        <span :class="['iconfont icon-good', haveLike ? 'active' : '']"></span>
+      </div>
+    </el-badge>
+    <!-- 评论 -->
+    <el-badge
+      :value="articleInfo.commentCount"
+      type="info"
+      :hidden="!articleInfo.commentCount > 0"
+    >
+      <div class="quick-item" @click="goToPosition('view-comment')">
+        <span class="iconfont icon-comment"></span>
+      </div>
+    </el-badge>
+    <!-- 附件 -->
+    <div class="quick-item" @click="goToPosition('view-attachment')">
+      <span class="iconfont icon-attachment"></span>
     </div>
   </div>
 </template>
@@ -78,8 +112,16 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getArticleDetail } from '@/model/api'
+import confirm from '@/utils/confirm'
+import {
+  getArticleDetail,
+  doLike,
+  getUserIntegral,
+  attachmentDownload
+} from '@/model/api'
 import utils from '@/utils/utils'
+import store from '@/store'
+import message from '@/utils/message'
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
@@ -87,6 +129,8 @@ const router = useRouter()
 // 文章详情信息
 const articleInfo = ref({})
 const attachment = ref({})
+// 是否点赞
+const haveLike = ref(false)
 async function getArticleDetails (articleId) {
   let result = await getArticleDetail({ articleId })
 
@@ -94,7 +138,75 @@ async function getArticleDetails (articleId) {
 
   articleInfo.value = result.data.forumArticle
   attachment.value = result.data.attachment
+  haveLike.value = result.data.haveLike
 }
+
+// 快捷操作的位置
+const quickPanelLeft =
+  (window.innerWidth - proxy.globalInfo.bodyWidth) / 2 - 120
+
+function goToPosition (domId) {
+  document.querySelector('#' + domId).scrollIntoView()
+}
+
+async function handleLike () {
+  // 手动去拦截(需要登录状态) 不用请求一次后台才去响应 少一次后端请求
+  if (!store.getters.getLoginUserInfo) {
+    store.commit('showLogin', true)
+    return
+  }
+
+  let result = await doLike({ articleId: articleInfo.value.articleId })
+
+  if (!result) return
+  haveLike.value = !haveLike.value
+  let goodCount = 1
+  if (!haveLike.value) {
+    goodCount = -1
+  }
+  articleInfo.value.goodCount = articleInfo.value.goodCount + goodCount
+}
+
+// 下载附件
+async function downloadAttachment (fileId) {
+  const currentUserInfo = store.getters.getLoginUserInfo
+  if (!currentUserInfo) {
+    store.commit('showLogin', true)
+    return
+  }
+  // 附件需要 0 积分  当前用户等于发表文章作者 直接跳过
+  if (
+    attachment.value.integral === 0 ||
+    currentUserInfo.userId === articleInfo.userId
+  ) {
+    download(fileId)
+  }
+  // 获取用户积分
+  let result = await getUserIntegral({ fileId })
+  if (!result) return
+
+  // 判断用户是否下载过
+  if (result.data.haveDownload) {
+    return download(fileId)
+  }
+  // 积分不够 并且 不是自己的文章
+  if (result.data.userIntegral < attachment.value.integral) {
+    return message.warning('积分不够，无法下载')
+  }
+
+  confirm(
+    `你还有${result.data.userIntegral}积分,当前下载会扣除${attachment.value.integral}积分，确认要下载吗？`,
+    () => {
+      download(fileId)
+    }
+  )
+}
+
+function download (fileId) {
+  document.location.href = '/api/forum/attachmentDownload?fileId=' + fileId
+  attachment.value.downloadCount = attachment.value.downloadCount + 1
+}
+
 onMounted(() => {
   getArticleDetails(route.params.articleId)
 })
@@ -183,6 +295,37 @@ onMounted(() => {
           padding: 0 5px;
         }
       }
+    }
+    .comment-panel {
+      margin-top: 20px;
+      background: rgb(0, 0, 0, 0.1);
+    }
+  }
+}
+.quick-panel {
+  position: absolute;
+  top: 200px;
+  width: 50px;
+  text-align: center;
+  .el-badge__content.is-fixed {
+    top: 5px;
+    right: 15px;
+  }
+  .quick-item {
+    display: flex;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background: #9f9f9f;
+    margin-bottom: 30px;
+    .iconfont {
+      font-size: 22px;
+    }
+    .active {
+      color: var(--pink);
     }
   }
 }

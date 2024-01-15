@@ -6,7 +6,7 @@
       :buttons="dialogConfig.buttons"
       width="400px"
       :showCancel="false"
-      @close="dialogConfig.visible = false"
+      @close="closeDialog"
     >
       <el-form
         class="login-register"
@@ -455,6 +455,11 @@ function submit () {
       showPanel(1)
     }
   })
+}
+
+function closeDialog () {
+  dialogConfig.visible = false
+  store.commit('showLogin', false)
 }
 </script>
 
