@@ -44,7 +44,7 @@ function show (index) {
 defineExpose({ show })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .image-viewer {
   .el-image-viewer__mask {
     opacity: 0.7;

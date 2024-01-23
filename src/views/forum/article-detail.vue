@@ -122,12 +122,7 @@
 import { ref, reactive, getCurrentInstance, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import confirm from '@/utils/confirm'
-import {
-  getArticleDetail,
-  doLike,
-  getUserIntegral,
-  attachmentDownload
-} from '@/model/api'
+import { getArticleDetail, articleDoLike, getUserIntegral } from '@/model/api'
 import utils from '@/utils/utils'
 import store from '@/store'
 import message from '@/utils/message'
@@ -179,7 +174,7 @@ async function handleLike () {
     return
   }
 
-  let result = await doLike({ articleId: articleInfo.value.articleId })
+  let result = await articleDoLike({ articleId: articleInfo.value.articleId })
 
   if (!result) return
   haveLike.value = !haveLike.value

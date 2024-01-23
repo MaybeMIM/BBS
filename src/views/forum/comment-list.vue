@@ -41,12 +41,30 @@
       </div>
       <div class="send-btn">发表</div>
     </div>
+    <div class="comment-list">
+      <DataList
+        :data-source="commentListInfo"
+        :loading="loading"
+        @load-data="loadComments"
+      >
+        <template #default="{ data }">
+          <CommentListItem
+            :comment-data="data"
+            :article-user-id="articleUserId"
+            :current-user-id="currentUserInfo.userId"
+          ></CommentListItem>
+        </template>
+      </DataList>
+    </div>
   </div>
 </template>
 
 <script setup>
 import store from '@/store'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { loadComment } from '@/model/api.js'
+import DataList from '@/components/data-list.vue'
+import CommentListItem from './comment-list-item.vue'
 
 const props = defineProps({
   articleId: {
@@ -57,11 +75,19 @@ const props = defineProps({
   }
 })
 
+// 评论列表
+const commentListInfo = ref([])
+
+// 排序
+const orderType = ref(0)
+
+const loading = ref(false)
 const formData = ref({})
 const form = ref()
 const rules = {
   content: [{ required: true, message: '请输入评论内容' }]
 }
+
 // 当前用户信息
 const currentUserInfo = ref({})
 watch(
@@ -74,6 +100,25 @@ watch(
 
 // 选择图片
 function selectImg () {}
+
+// 评论列表
+async function loadComments () {
+  loading.value = true
+  const params = {
+    pageNo: commentListInfo.value.pageNo,
+    articleId: props.articleId,
+    orderType: orderType.value
+  }
+
+  let result = await loadComment(params)
+  loading.value = false
+
+  if (!result) return
+
+  commentListInfo.value = result.data
+}
+
+loadComments()
 </script>
 
 <style lang="scss" scoped>

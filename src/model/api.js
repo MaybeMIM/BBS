@@ -21,7 +21,7 @@ export function getArticleDetail (params) {
 }
 
 // 点赞
-export function doLike (params) {
+export function articleDoLike (params) {
   return Request({ url: '/forum/doLike', params })
 }
 
@@ -30,7 +30,27 @@ export function getUserIntegral (params) {
   return Request({ url: '/forum/getUserDownloadInfo', params })
 }
 
-// 附件下载
-export function attachmentDownload () {
-  return Request({ url: '/forum/attachmentDownload' })
+// // 附件下载
+// export function attachmentDownload () {
+//   return Request({ url: '/forum/attachmentDownload' })
+// }
+
+// 评论列表
+export function loadComment (params) {
+  return Request({ url: '/comment/loadComment', params })
+}
+
+// 发布评论
+export function postComment () {
+  return Request({ url: '/comment/postComment' })
+}
+
+// 评论点赞
+export function commentDoLike () {
+  return Request({ url: '/comment/doLike' })
+}
+
+// 置顶评论
+export function changeTopType () {
+  return Request({ url: '/comment/changeTopType' })
 }
