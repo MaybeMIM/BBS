@@ -20,6 +20,7 @@
       @click="jumpPage"
     >
     </el-image>
+    <div v-else class="no-login">未登录</div>
   </div>
 </template>
 
@@ -52,6 +53,15 @@ function jumpPage () {
 
 <style lang="scss">
 .avatar {
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  overflow: hidden;
+  background: #666666;
+  .no-login {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+  }
 }
 </style>

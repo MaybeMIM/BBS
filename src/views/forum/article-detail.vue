@@ -19,6 +19,7 @@
       </template>
       <span>{{ articleInfo.title }}</span>
     </div>
+
     <!-- 标题、文章发表信息 -->
     <div
       class="detail-container"
@@ -63,7 +64,7 @@
               >积分
             </div>
             <div class="download-count item">
-              已下载{{ attachment.downloadCount }}
+              已下载{{ attachment.downloadCount }}次
             </div>
             <div class="download-btn item">
               <el-button
@@ -76,7 +77,13 @@
           </div>
         </div>
         <!-- 评论 -->
-        <div class="comment-panel" id="view-comment"></div>
+        <div class="comment-panel" id="view-comment">
+          <CommentList
+            v-if="articleInfo.articleId"
+            :article-id="articleInfo.articleId"
+            :article-user-id="articleInfo.userId"
+          ></CommentList>
+        </div>
       </div>
     </div>
   </div>
@@ -125,6 +132,7 @@ import utils from '@/utils/utils'
 import store from '@/store'
 import message from '@/utils/message'
 import ImageViewer from '@/components/image-viewer.vue'
+import CommentList from './comment-list.vue'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 
@@ -145,6 +153,10 @@ async function getArticleDetails (articleId) {
   articleInfo.value = result.data.forumArticle
   attachment.value = result.data.attachment
   haveLike.value = result.data.haveLike
+
+  // 板块、列表变化
+  store.commit('setActivePBoardId', result.data.forumArticle.pBoardId)
+  store.commit('setActiveBoardId', result.data.forumArticle.boardId)
 
   // 图片预览
   imagePreview()
@@ -259,6 +271,7 @@ onMounted(() => {
 
 <style lang="scss">
 .article-detail-body {
+  color: #c4c4c4;
   .board-info {
     line-height: 40px;
     .icon-right {
@@ -272,7 +285,6 @@ onMounted(() => {
       .title {
         font-size: 20px;
         font-weight: bold;
-        color: #c4c4c4;
       }
       .user-info {
         margin-top: 15px;
@@ -342,6 +354,7 @@ onMounted(() => {
       }
     }
     .comment-panel {
+      padding: 20px;
       margin-top: 20px;
       background: rgb(0, 0, 0, 0.1);
     }
