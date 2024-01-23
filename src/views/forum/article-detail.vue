@@ -125,6 +125,8 @@ import utils from '@/utils/utils'
 import store from '@/store'
 import message from '@/utils/message'
 import ImageViewer from '@/components/image-viewer.vue'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/atom-one-light.css'
 
 const { proxy } = getCurrentInstance()
 const route = useRoute()
@@ -146,6 +148,8 @@ async function getArticleDetails (articleId) {
 
   // 图片预览
   imagePreview()
+  // 代码高亮
+  highLightCode()
 }
 
 // 快捷操作的位置
@@ -235,6 +239,16 @@ function imagePreview () {
       })
     })
     previewImgList.value = imageList
+  })
+}
+
+// 代码高亮
+function highLightCode () {
+  nextTick(() => {
+    let blocks = document.querySelectorAll('pre code')
+    blocks.forEach(item => {
+      hljs.highlightBlock(item)
+    })
   })
 }
 
