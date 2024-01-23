@@ -106,11 +106,13 @@
     <div class="quick-item" @click="goToPosition('view-attachment')">
       <span class="iconfont icon-attachment"></span>
     </div>
+    <!-- 图片预览 -->
+    <ImageViewer ref="imageViewer" :imageList="previewImgList"></ImageViewer>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
+import { ref, reactive, getCurrentInstance, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import confirm from '@/utils/confirm'
 import {
@@ -122,6 +124,8 @@ import {
 import utils from '@/utils/utils'
 import store from '@/store'
 import message from '@/utils/message'
+import ImageViewer from '@/components/image-viewer.vue'
+
 const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
@@ -139,6 +143,9 @@ async function getArticleDetails (articleId) {
   articleInfo.value = result.data.forumArticle
   attachment.value = result.data.attachment
   haveLike.value = result.data.haveLike
+
+  // 图片预览
+  imagePreview()
 }
 
 // 快捷操作的位置
@@ -205,6 +212,30 @@ async function downloadAttachment (fileId) {
 function download (fileId) {
   document.location.href = '/api/forum/attachmentDownload?fileId=' + fileId
   attachment.value.downloadCount = attachment.value.downloadCount + 1
+}
+
+// 文章图片列表(存放图片地址)
+const previewImgList = ref([])
+
+const imageViewer = ref()
+function imagePreview () {
+  nextTick(() => {
+    // 拿到所有的img标签
+    const imageNodeList = document
+      .querySelector('#detail')
+      .querySelectorAll('img')
+    // 需要传给图片预览组件的图片数组
+    const imageList = []
+    imageNodeList.forEach((item, index) => {
+      const src = item.getAttribute('src')
+      imageList.push(src)
+      // 添加点击事件，展示图片预览
+      item.addEventListener('click', () => {
+        imageViewer.value.show(index)
+      })
+    })
+    previewImgList.value = imageList
+  })
 }
 
 onMounted(() => {
