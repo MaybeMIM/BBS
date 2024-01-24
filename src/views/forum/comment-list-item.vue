@@ -21,7 +21,12 @@
         <div class="iconfont icon-good">
           {{ commentData.goodCount > 0 ? commentData.goodCount : '点赞' }}
         </div>
-        <div class="iconfont icon-comment">回复</div>
+        <div
+          class="iconfont icon-comment"
+          @click="showReplayPanel(commentData)"
+        >
+          回复
+        </div>
         <el-dropdown v-if="articleUserId === currentUserId">
           <div class="iconfont icon-more"></div>
           <template #dropdown>
@@ -33,16 +38,55 @@
           </template>
         </el-dropdown>
       </div>
+      <div class="replay-info" v-if="commentData.showReplay">
+        <PostComment
+          :avatar-width="30"
+          :article-id="articleId"
+          :user-id="currentUserId"
+          :p-comment-id="pCommentId"
+          :replay-user-id="replayUserId"
+          :show-insert-img="false"
+          @post-comment-finish="postCommentFinish"
+        ></PostComment>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+import PostComment from './post-comment.vue'
+
 const props = defineProps({
+  articleId: String,
   commentData: Object,
   articleUserId: String,
   currentUserId: String
 })
+
+const emit = defineEmits(['hiddenOtherReplay'])
+
+// 回复评论的 父级Id
+const pCommentId = ref(0)
+// 回复其他人的 Id
+const replayUserId = ref(null)
+// 展示评论框
+function showReplayPanel (curData) {
+  // 先缓存起来 不会因为触发emit而改变
+  const cache = curData.showReplay === undefined ? false : curData.showReplay
+
+  // 先关闭其他评论框 再展示当前评论框
+  emit('hiddenOtherReplay')
+  curData.showReplay = !cache
+  // 点击回复之后 当前的id就是父级id
+  pCommentId.value = curData.commentId
+}
+
+function postCommentFinish (resultData) {
+  const children = props.commentData.children || []
+  children.unshift(resultData)
+}
 </script>
 
 <style lang="scss">
@@ -86,10 +130,14 @@ const props = defineProps({
       .iconfont {
         margin-right: 15px;
         font-size: 14px;
+        cursor: pointer;
         &::before {
           margin-right: 3px;
         }
       }
+    }
+    .replay-info {
+      margin-top: 10px;
     }
   }
 }

@@ -41,8 +41,8 @@ export function loadComment (params) {
 }
 
 // 发布评论
-export function postComment () {
-  return Request({ url: '/comment/postComment' })
+export function postComment (params) {
+  return Request({ url: '/comment/postComment', params })
 }
 
 // 评论点赞

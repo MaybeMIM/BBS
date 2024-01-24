@@ -12,34 +12,14 @@
     </div>
     <!-- 发送评论 -->
     <div class="comment-form-panel">
-      <Avatar :width="50" :userId="currentUserInfo.userId" />
-      <div class="comment-form">
-        <el-form :model="formData" :rules="rules" ref="form" @submit.prevent>
-          <el-form-item prop="content">
-            <el-input
-              clearable
-              placeholder="请输入评论内容"
-              type="textarea"
-              :maxlength="150"
-              resize="none"
-              show-word-limit
-              v-model.trim="formData.content"
-            ></el-input>
-            <div class="insert-img" v-if="currentUserInfo.userId">
-              <el-upload
-                name="file"
-                :show-file-list="false"
-                accept=".png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.git,.GIT,.bmp,.BMP"
-                :multiple="false"
-                :http-request="selectImg"
-              >
-                <span class="iconfont icon-image"></span>
-              </el-upload>
-            </div>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="send-btn">发表</div>
+      <PostComment
+        :avatar-width="50"
+        :p-comment-id="0"
+        :article-id="articleId"
+        :user-id="currentUserInfo.userId"
+        :show-insert-img="currentUserInfo.userId !== null"
+        @post-comment-finish="postCommentFinish"
+      ></PostComment>
     </div>
     <div class="comment-list">
       <DataList
@@ -50,8 +30,10 @@
         <template #default="{ data }">
           <CommentListItem
             :comment-data="data"
+            :article-id="articleId"
             :article-user-id="articleUserId"
             :current-user-id="currentUserInfo.userId"
+            @hidden-other-replay="handleHiddenOtherReplay"
           ></CommentListItem>
         </template>
       </DataList>
@@ -65,6 +47,7 @@ import { ref, watch, onMounted } from 'vue'
 import { loadComment } from '@/model/api.js'
 import DataList from '@/components/data-list.vue'
 import CommentListItem from './comment-list-item.vue'
+import PostComment from './post-comment.vue'
 
 const props = defineProps({
   articleId: {
@@ -82,11 +65,6 @@ const commentListInfo = ref([])
 const orderType = ref(0)
 
 const loading = ref(false)
-const formData = ref({})
-const form = ref()
-const rules = {
-  content: [{ required: true, message: '请输入评论内容' }]
-}
 
 // 当前用户信息
 const currentUserInfo = ref({})
@@ -97,9 +75,6 @@ watch(
   },
   { immediate: true, deep: true }
 )
-
-// 选择图片
-function selectImg () {}
 
 // 评论列表
 async function loadComments () {
@@ -119,6 +94,19 @@ async function loadComments () {
 }
 
 loadComments()
+
+// 隐藏其他评论框
+function handleHiddenOtherReplay () {
+  commentListInfo.value.list.forEach(item => {
+    item.showReplay = false
+  })
+}
+
+// 评论发表完成
+function postCommentFinish (data) {
+  // 给当前评论列表 前面添加刚发布的评论
+  commentListInfo.value.list.unshift(data)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -140,28 +128,6 @@ loadComments()
   }
   .comment-form-panel {
     margin-top: 10px;
-    display: flex;
-    .comment-form {
-      flex: 1;
-      margin: 0 20px;
-      .el-textarea__inner {
-        height: 60px;
-      }
-      .iconfont {
-        font-size: 20px;
-      }
-    }
-    .send-btn {
-      width: 80px;
-      height: 40px;
-      font-weight: 500;
-      text-align: center;
-      cursor: pointer;
-      line-height: 40px;
-      margin-top: 5px;
-      border-radius: 7px;
-      background: var(--link);
-    }
   }
 }
 </style>
