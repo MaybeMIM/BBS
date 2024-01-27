@@ -46,8 +46,8 @@ export function postComment (params) {
 }
 
 // 评论点赞
-export function commentDoLike () {
-  return Request({ url: '/comment/doLike' })
+export function commentDoLike (params) {
+  return Request({ url: '/comment/doLike', params })
 }
 
 // 置顶评论

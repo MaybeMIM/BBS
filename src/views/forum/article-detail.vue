@@ -195,7 +195,7 @@ async function downloadAttachment (fileId) {
   // 附件需要 0 积分  当前用户等于发表文章作者 直接跳过
   if (
     attachment.value.integral === 0 ||
-    currentUserInfo.userId === articleInfo.userId
+    currentUserInfo.userId === articleInfo.value.userId
   ) {
     download(fileId)
   }
@@ -356,7 +356,7 @@ onMounted(() => {
   }
 }
 .quick-panel {
-  position: absolute;
+  position: fixed;
   top: 200px;
   width: 50px;
   text-align: center;

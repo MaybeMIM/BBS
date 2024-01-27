@@ -2,16 +2,23 @@
   <div class="post-comment-panel">
     <Avatar :width="avatarWidth" :userId="userId" />
     <div class="comment-form">
-      <el-form :model="formData" :rules="rules" ref="form" @submit.prevent>
+      <el-form
+        ref="form"
+        :rules="rules"
+        :model="formData"
+        @submit.prevent
+        :validate-on-rule-change="false"
+      >
         <el-form-item prop="content">
           <el-input
+            ref="inputRef"
             clearable
             :placeholder="placeholderInfo"
             type="textarea"
             :maxlength="150"
             resize="none"
             show-word-limit
-            v-model.trim="formData.content"
+            v-model="formData.content"
           ></el-input>
           <div class="insert-img" v-if="showInsertImg">
             <el-upload
@@ -32,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { postComment } from '@/model/api'
 import message from '@/utils/message'
 
@@ -40,10 +47,11 @@ const props = defineProps({
   // 文章Id
   articleId: String,
   pCommentId: Number,
-  replayUserId: String,
+  replyUserId: String,
   avatarWidth: Number,
   userId: String,
   showInsertImg: Boolean,
+  autofocus: Boolean,
   placeholderInfo: {
     type: String,
     default: '请输入评论内容'
@@ -52,10 +60,27 @@ const props = defineProps({
 
 const emit = defineEmits(['postCommentFinish'])
 
+const inputRef = ref()
+
 const formData = ref({})
 const form = ref()
 const rules = {
   content: [{ required: true, message: '请输入评论内容' }]
+}
+
+// 自动获取焦点
+watch(
+  () => props.autofocus,
+  v => {
+    if (!v) return
+    nextTick(() => {
+      autoFocus()
+    })
+  },
+  { immediate: true, deep: true }
+)
+function autoFocus () {
+  inputRef.value.focus()
 }
 
 // 发表评论
@@ -66,8 +91,9 @@ async function handelPostComment () {
     let params = Object.assign({}, formData.value)
     params.articleId = props.articleId
     params.pCommentId = props.pCommentId
-    params.replayUserId = props.replayUserId
+    params.replayUserId = props.replyUserId
 
+    // 评论内容 为文字没有问题 但是为字母大概率会参数错误(???)
     let result = await postComment(params)
 
     if (!result) return

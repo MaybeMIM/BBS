@@ -12,14 +12,14 @@
     </div>
     <!-- 发送评论 -->
     <div class="comment-form-panel">
-      <PostComment
+      <CommentPost
         :avatar-width="50"
         :p-comment-id="0"
         :article-id="articleId"
         :user-id="currentUserInfo.userId"
         :show-insert-img="currentUserInfo.userId !== null"
         @post-comment-finish="postCommentFinish"
-      ></PostComment>
+      ></CommentPost>
     </div>
     <div class="comment-list">
       <DataList
@@ -33,7 +33,7 @@
             :article-id="articleId"
             :article-user-id="articleUserId"
             :current-user-id="currentUserInfo.userId"
-            @hidden-other-replay="handleHiddenOtherReplay"
+            @hidden-other-reply="handleHiddenOtherReply"
           ></CommentListItem>
         </template>
       </DataList>
@@ -47,7 +47,7 @@ import { ref, watch, onMounted } from 'vue'
 import { loadComment } from '@/model/api.js'
 import DataList from '@/components/data-list.vue'
 import CommentListItem from './comment-list-item.vue'
-import PostComment from './post-comment.vue'
+import CommentPost from './comment-post.vue'
 
 const props = defineProps({
   articleId: {
@@ -96,9 +96,9 @@ async function loadComments () {
 loadComments()
 
 // 隐藏其他评论框
-function handleHiddenOtherReplay () {
+function handleHiddenOtherReply () {
   commentListInfo.value.list.forEach(item => {
-    item.showReplay = false
+    item.showReply = false
   })
 }
 
