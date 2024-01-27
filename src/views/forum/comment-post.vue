@@ -91,7 +91,7 @@ async function handelPostComment () {
     let params = Object.assign({}, formData.value)
     params.articleId = props.articleId
     params.pCommentId = props.pCommentId
-    params.replayUserId = props.replyUserId
+    params.replyUserId = props.replyUserId
 
     // 评论内容 为文字没有问题 但是为字母大概率会参数错误(???)
     let result = await postComment(params)
