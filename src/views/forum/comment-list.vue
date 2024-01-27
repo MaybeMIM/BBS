@@ -2,7 +2,7 @@
   <div class="comment-body">
     <div class="comment-title">
       <div class="title">
-        评论<span class="count">{{ 0 }}</span>
+        评论<span class="count">{{ commentListInfo.totalCount }}</span>
       </div>
       <div class="tab">
         <span>最热</span>
@@ -43,7 +43,7 @@
 
 <script setup>
 import store from '@/store'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { loadComment } from '@/model/api.js'
 import DataList from '@/components/data-list.vue'
 import CommentListItem from './comment-list-item.vue'

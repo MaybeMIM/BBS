@@ -10,9 +10,21 @@
           >作者</span
         >
       </div>
+      <!-- 内容 -->
       <div class="comment-content">
-        <span v-html="commentData.content"></span>
+        <div v-html="commentData.content"></div>
+        <!-- 带有_的为缩略图 -->
+        <CommentImage
+          :style="{ 'margin-top': '10px' }"
+          v-if="commentData.imgPath"
+          :src="
+            proxy.globalInfo.imageUrl + commentData.imgPath.replace('.', '_.')
+          "
+          :img-list="[proxy.globalInfo.imageUrl + commentData.imgPath]"
+        ></CommentImage>
       </div>
+
+      <!-- 其他信息面板 -->
       <div class="op-panel">
         <div class="time">
           <span>{{ commentData.postTime }}</span>
@@ -109,10 +121,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import CommentPost from './comment-post.vue'
+import CommentImage from './comment-image.vue'
 import { commentDoLike } from '@/model/api'
+
+const { proxy } = getCurrentInstance()
 
 const router = useRouter()
 
@@ -209,7 +224,7 @@ async function doLike (data) {
       }
     }
     .comment-content {
-      margin-top: 6px;
+      margin-top: 2px;
       font-size: 15px;
       line-height: 22px;
     }

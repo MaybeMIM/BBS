@@ -2,13 +2,7 @@
   <div class="post-comment-panel">
     <Avatar :width="avatarWidth" :userId="userId" />
     <div class="comment-form">
-      <el-form
-        ref="form"
-        :rules="rules"
-        :model="formData"
-        @submit.prevent
-        :validate-on-rule-change="false"
-      >
+      <el-form ref="form" :rules="rules" :model="formData" @submit.prevent>
         <el-form-item prop="content">
           <el-input
             ref="inputRef"
@@ -21,7 +15,13 @@
             v-model="formData.content"
           ></el-input>
           <div class="insert-img" v-if="showInsertImg">
+            <div class="pre-img" v-if="commentImg">
+              <!-- 上传图片预览 -->
+              <CommentImage :src="commentImg"></CommentImage>
+              <span class="iconfont icon-remove" @click="removeImg"></span>
+            </div>
             <el-upload
+              v-else
               name="file"
               :show-file-list="false"
               accept=".png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.git,.GIT,.bmp,.BMP"
@@ -42,6 +42,7 @@
 import { nextTick, ref, watch } from 'vue'
 import { postComment } from '@/model/api'
 import message from '@/utils/message'
+import CommentImage from './comment-image.vue'
 
 const props = defineProps({
   // 文章Id
@@ -65,7 +66,7 @@ const inputRef = ref()
 const formData = ref({})
 const form = ref()
 const rules = {
-  content: [{ required: true, message: '请输入评论内容' }]
+  content: [{ required: true, message: '请输入评论内容', trigger: 'change' }]
 }
 
 // 自动获取焦点
@@ -93,7 +94,7 @@ async function handelPostComment () {
     params.pCommentId = props.pCommentId
     params.replyUserId = props.replyUserId
 
-    // 评论内容 为文字没有问题 但是为字母大概率会参数错误(???)
+    //FIXME 评论内容 为文字没有问题 但是为字母大概率会参数错误(???)
     let result = await postComment(params)
 
     if (!result) return
@@ -102,6 +103,7 @@ async function handelPostComment () {
     resetForm()
     // 评论完之后 给父级的回调(便于重新获取数据 获取最新的评论)
     emit('postCommentFinish', result.data)
+    removeImg()
   })
 }
 
@@ -110,7 +112,25 @@ function resetForm () {
 }
 
 // 选择图片
-function selectImg () {}
+const commentImg = ref(null)
+function selectImg (file) {
+  file = file.file
+  // 读取文件流
+  let img = new FileReader()
+  img.readAsDataURL(file)
+  // 获取读取的图片数据
+  img.onload = ({ target }) => {
+    let imgData = target.result
+    // 显示图片
+    commentImg.value = imgData
+    formData.value.image = file
+  }
+}
+
+function removeImg () {
+  commentImg.value = null
+  formData.value.image = null
+}
 </script>
 
 <style lang="scss">
@@ -122,8 +142,23 @@ function selectImg () {}
     .el-textarea__inner {
       height: 60px;
     }
-    .iconfont {
-      font-size: 20px;
+    .insert-img {
+      line-height: normal;
+      .iconfont {
+        margin-top: 5px;
+        font-size: 20px;
+      }
+      .pre-img {
+        position: relative;
+        margin-top: 10px;
+        .iconfont {
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          cursor: pointer;
+          color: #656564;
+        }
+      }
     }
   }
   .send-btn {
