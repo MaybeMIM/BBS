@@ -12,7 +12,15 @@
       </div>
       <!-- 内容 -->
       <div class="comment-content">
-        <div v-html="commentData.content"></div>
+        <div>
+          <span class="tag tag-topping" v-if="commentData.topType === 1"
+            >置顶</span
+          >
+          <span class="tag no-audit" v-if="commentData.status === 0"
+            >待审核</span
+          >
+          <span v-html="commentData.content"></span>
+        </div>
         <!-- 带有_的为缩略图 -->
         <CommentImage
           :style="{ 'margin-top': '10px' }"
@@ -51,7 +59,7 @@
           <div class="iconfont icon-more"></div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>
+              <el-dropdown-item @click="opTop(commentData)">
                 {{ commentData.topType === 0 ? '设为置顶' : '取消置顶' }}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -125,7 +133,7 @@ import { ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import CommentPost from './comment-post.vue'
 import CommentImage from './comment-image.vue'
-import { commentDoLike } from '@/model/api'
+import { commentDoLike, changeTopType } from '@/model/api'
 
 const { proxy } = getCurrentInstance()
 
@@ -141,7 +149,7 @@ const props = defineProps({
 // 点击 回复 自动获取文本框焦点
 const autofocus = ref(false)
 
-const emit = defineEmits(['hiddenOtherReply'])
+const emit = defineEmits(['hiddenOtherReply', 'reloadData'])
 
 // 回复的默认文本
 const placeholderInfo = ref(null)
@@ -187,12 +195,26 @@ function gotoUCenter (userId) {
 // 点赞
 async function doLike (data) {
   const commentId = data.commentId
-  let result = await commentDoLike({ commentId })
+  let result = await commentDoLike({ commentId }, false)
 
   if (!result) return
 
   data.goodCount = result.data.goodCount
   data.likeType = result.data.likeType
+}
+
+// 置顶
+async function opTop (data) {
+  const params = {
+    commentId: data.commentId,
+    topType: data.topType === 1 ? 0 : 1
+  }
+
+  let result = await changeTopType(params)
+
+  if (!result) return
+  // 置顶之后需要重新加载一下数据
+  emit('reloadData')
 }
 </script>
 
@@ -221,12 +243,27 @@ async function doLike (data) {
         font-size: 12px;
         color: #fff;
         border-radius: 2px;
+        padding: 0 3px;
       }
     }
     .comment-content {
       margin-top: 2px;
       font-size: 15px;
       line-height: 22px;
+      .tag {
+        margin-right: 5px;
+        font-size: 12px;
+        border-radius: 3px;
+        padding: 0 5px;
+      }
+      .tag-topping {
+        color: var(--pink);
+        border: 1px solid var(--pink);
+      }
+      .no-audit {
+        color: var(--text);
+        border: 1px solid var(--text);
+      }
     }
     .op-panel {
       display: flex;

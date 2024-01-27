@@ -36,8 +36,8 @@ export function getUserIntegral (params) {
 // }
 
 // 评论列表
-export function loadComment (params) {
-  return Request({ url: '/comment/loadComment', params })
+export function loadComment (params, showLoading) {
+  return Request({ url: '/comment/loadComment', params, showLoading })
 }
 
 // 发布评论
@@ -46,11 +46,11 @@ export function postComment (params) {
 }
 
 // 评论点赞
-export function commentDoLike (params) {
-  return Request({ url: '/comment/doLike', params })
+export function commentDoLike (params, showLoading) {
+  return Request({ url: '/comment/doLike', params, showLoading })
 }
 
 // 置顶评论
-export function changeTopType () {
-  return Request({ url: '/comment/changeTopType' })
+export function changeTopType (params) {
+  return Request({ url: '/comment/changeTopType', params })
 }

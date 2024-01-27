@@ -65,8 +65,23 @@ const inputRef = ref()
 
 const formData = ref({})
 const form = ref()
+
+const checkPostComment = (rule, value, cb) => {
+  if (value == null && formData.value.image == null) {
+    cb(new Error(rule.message))
+  } else {
+    cb()
+  }
+}
+
 const rules = {
-  content: [{ required: true, message: '请输入评论内容', trigger: 'change' }]
+  content: [
+    {
+      required: true,
+      message: '请输入评论内容',
+      validator: checkPostComment
+    }
+  ]
 }
 
 // 自动获取焦点

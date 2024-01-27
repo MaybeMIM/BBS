@@ -5,7 +5,7 @@
     :zoom-rate="1.2"
     :preview-src-list="imgList ? imgList : [src]"
     :initial-index="0"
-    fit="scale-down"
+    fit="fill"
     loading="lazy"
     hide-on-click-modal
   >
@@ -23,6 +23,6 @@ const props = defineProps({
 .comment-img {
   width: 80px;
   height: 80px;
-  background: #eee;
+  border-radius: 5px;
 }
 </style>

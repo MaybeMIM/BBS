@@ -5,9 +5,17 @@
         评论<span class="count">{{ commentListInfo.totalCount }}</span>
       </div>
       <div class="tab">
-        <span>最热</span>
+        <span
+          @click="orderTypeChange(0)"
+          :class="[orderType === 0 ? 'active' : '']"
+          >最热</span
+        >
         <el-divider direction="vertical"></el-divider>
-        <span>最新</span>
+        <span
+          @click="orderTypeChange(1)"
+          :class="[orderType === 1 ? 'active' : '']"
+          >最新</span
+        >
       </div>
     </div>
     <!-- 发送评论 -->
@@ -34,6 +42,7 @@
             :article-user-id="articleUserId"
             :current-user-id="currentUserInfo.userId"
             @hidden-other-reply="handleHiddenOtherReply"
+            @reload-data="loadComments"
           ></CommentListItem>
         </template>
       </DataList>
@@ -58,6 +67,7 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['updateCommentCount'])
 // 评论列表
 const commentListInfo = ref([])
 
@@ -85,7 +95,7 @@ async function loadComments () {
     orderType: orderType.value
   }
 
-  let result = await loadComment(params)
+  let result = await loadComment(params, false)
   loading.value = false
 
   if (!result) return
@@ -106,6 +116,16 @@ function handleHiddenOtherReply () {
 function postCommentFinish (data) {
   // 给当前评论列表 前面添加刚发布的评论
   commentListInfo.value.list.unshift(data)
+  // 更新评论数量
+  const totalCount = commentListInfo.value.totalCount + 1
+  commentListInfo.value.totalCount = totalCount
+  emit('updateCommentCount', totalCount)
+}
+
+// 排序
+function orderTypeChange (type) {
+  orderType.value = type
+  loadComments()
 }
 </script>
 
@@ -115,6 +135,7 @@ function postCommentFinish (data) {
     display: flex;
     align-items: center;
     color: #c4c4c4;
+
     .count {
       font-size: 14px;
       padding: 0 10px;
@@ -123,6 +144,9 @@ function postCommentFinish (data) {
       margin-left: 10px;
       span {
         cursor: pointer;
+      }
+      .active {
+        color: var(--link);
       }
     }
   }
