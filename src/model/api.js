@@ -54,3 +54,23 @@ export function commentDoLike (params, showLoading) {
 export function changeTopType (params) {
   return Request({ url: '/comment/changeTopType', params })
 }
+
+// 图片上传
+export function uploadImage (params) {
+  return Request({ url: '/file/uploadImage', params })
+}
+
+// 发布文章获取的板块信息
+export function postCommentBoardList () {
+  return Request({ url: '/forum/loadBoard4Post' })
+}
+
+// 发布文章获取的文章详情
+export function editArticleDetail (params, showError, errorCallback) {
+  return Request({
+    url: '/forum/articleDetail4Update',
+    params,
+    showError,
+    errorCallback
+  })
+}

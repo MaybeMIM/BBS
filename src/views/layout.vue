@@ -68,7 +68,7 @@
         <div class="user-info-penal">
           <div class="op-btn">
             <el-button type="primary">
-              发帖<span class="iconfont icon-add"></span>
+              发帖<span class="iconfont icon-add" @click="newPost"></span>
             </el-button>
             <el-button type="primary">
               搜索<span class="iconfont icon-search"></span>
@@ -241,6 +241,15 @@ watch(
   { immediate: true, deep: true }
 )
 
+// 发布文章
+function newPost () {
+  if (!store.getters.getLoginUserInfo) {
+    loginAndResign(1)
+  } else {
+    router.push('/newPost')
+  }
+}
+
 onMounted(() => {
   initScroll()
   getUserInfo()
@@ -254,7 +263,7 @@ onMounted(() => {
   height: 60px;
   top: 0;
   position: fixed;
-  box-shadow: 0 2px 6px 0 #50a7d9;
+  box-shadow: 0 -4px 12px 0 #50a7d9;
   z-index: 999;
   background: #f3f2f2;
   transition: all 0.3s;

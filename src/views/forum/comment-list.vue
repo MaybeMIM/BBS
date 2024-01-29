@@ -34,6 +34,7 @@
         :data-source="commentListInfo"
         :loading="loading"
         @load-data="loadComments"
+        empty-msg="暂无评论，快来抢沙发吧"
       >
         <template #default="{ data }">
           <CommentListItem

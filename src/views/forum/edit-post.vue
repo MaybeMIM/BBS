@@ -1,0 +1,218 @@
+<template>
+  <div class="edit-post">
+    <el-form
+      :model="formData"
+      :rules="rules"
+      ref="form"
+      class="post-panel"
+      label-width="65px"
+      @submit.prevent
+    >
+      <!-- 正文 富文本编辑区域 -->
+      <div class="post-editor">
+        <el-card :body-style="{ padding: '5px' }">
+          <template #header>
+            <div class="post-editor-title">
+              <span>正文</span>
+              <div class="change-editor-type">
+                <span class="iconfont icon-change" @click="changeEditor"
+                  >切换为{{
+                    editorType === 0 ? 'markdown编辑器' : '富文本编辑器'
+                  }}</span
+                >
+              </div>
+            </div>
+          </template>
+          <el-form-item prop="content" label-width="0">
+            <EditHtml
+              v-if="editorType === 0"
+              v-model="formData.content"
+              :height="htmlEditorHeight"
+            ></EditHtml>
+            <EditorMarkdown
+              v-if="editorType === 1"
+              v-model="formData.markdownContent"
+              :height="markdownHeight"
+            ></EditorMarkdown>
+          </el-form-item>
+        </el-card>
+      </div>
+      <!-- 设置 文章标题 板块 封面 摘要 附件-->
+      <div class="post-setting">
+        <el-card :body-style="{ padding: '5px' }">
+          <template #header>
+            <span>设置</span>
+          </template>
+          <div class="setting-inner">
+            <el-form-item label="标题" prop="title">
+              <el-input
+                clearable
+                placeholder="提示信息"
+                v-model.trim="formData.title"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="板块" prop="boardIds">
+              <el-cascader
+                placeholder="请选择板块"
+                :options="boardList"
+                :props="boardProps"
+                clearable
+                v-model="formData.boardIds"
+                :style="{ width: '100%' }"
+              >
+              </el-cascader>
+            </el-form-item>
+            <el-form-item label="封面" prop="cover">
+              <CoverUpload v-model:modalValue="formData.cover"></CoverUpload>
+            </el-form-item>
+
+            <el-form-item label="摘要" prop="summary">
+              <el-input
+                clearable
+                placeholder="请选择摘要"
+                type="textarea"
+                :rows="5"
+                :maxlength="150"
+                resize="none"
+                show-word-limit
+                v-model="formData.summary"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="附件" prop="attachment">
+              <AttachmentSelector
+                v-model:modalValue="formData.attachment"
+              ></AttachmentSelector>
+            </el-form-item>
+            <el-form-item label="" prop="">
+              <el-button type="primary" :style="{ width: '100%' }"
+                >保存</el-button
+              >
+            </el-form-item>
+          </div>
+        </el-card>
+      </div>
+    </el-form>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch, getCurrentInstance, nextTick } from 'vue'
+import EditorMarkdown from '@/components/editor-markdown.vue'
+import EditHtml from '@/components/editor-html.vue'
+import CoverUpload from '@/components/cover-upload.vue'
+import AttachmentSelector from '../../components/attachment-selector.vue'
+import confirm from '@/utils/confirm.js'
+import { postCommentBoardList, editArticleDetail } from '@/model/api.js'
+import { useRoute, useRouter } from 'vue-router'
+
+const { proxy } = getCurrentInstance()
+
+const route = useRoute()
+const router = useRouter()
+
+const markdownHeight = window.innerHeight - 118
+const htmlEditorHeight = window.innerHeight - 156
+
+const formData = ref({})
+const form = ref()
+const rules = {
+  title: [{ required: true, message: '请输入内容' }]
+}
+
+// 编辑器类型 0:富文本 1:markdown
+const editorType = ref(null)
+
+const articleId = ref(null)
+
+watch(
+  () => route,
+  (newVal, oldVal) => {
+    // 监听路由 先判断是否是发帖模块里面的路径 再进行赋值
+    if (
+      newVal.path.indexOf('/editPost') !== -1 ||
+      newVal.path.indexOf('/newPost') !== -1
+    ) {
+      articleId.value = newVal.params.articleId
+      getArticleDetail()
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+// 板块信息
+const boardProps = {
+  multiple: false,
+  checkStrictly: true,
+  value: 'boardId',
+  label: 'boardName'
+}
+const boardList = ref([])
+
+async function loadBoardList () {
+  let result = await postCommentBoardList()
+
+  if (!result) return
+  boardList.value = result.data
+}
+loadBoardList()
+
+// 切换编辑器
+function changeEditor () {
+  confirm('切换编辑器会清空正在编辑的内容，确定切换吗?', () => {
+    editorType.value = editorType.value === 0 ? 1 : 0
+    formData.value.content = ''
+    formData.value.markdownContent = ''
+    // 设置Cookies 编辑器的类型 永不过期
+    proxy.VueCookies.set('editorType', editorType.value, -1)
+  })
+}
+
+function getArticleDetail () {
+  nextTick(() => {
+    form.value.resetFields()
+    if (articleId.value) {
+      // 修改文章(要获取信息)
+      update()
+    } else {
+      // 新增
+      formData.value = {}
+      editorType.value =
+        Number.parseFloat(proxy.VueCookies.get('editorType')) || 0
+    }
+  })
+}
+</script>
+
+<style lang="scss">
+.edit-post {
+  .post-panel {
+    display: flex;
+    .el-card__header {
+      padding: 10px;
+    }
+    .post-editor {
+      flex: 1;
+      .post-editor-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .change-editor-type {
+          .iconfont {
+            cursor: pointer;
+            color: var(--link);
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .post-setting {
+      margin-left: 10px;
+      width: 450px;
+      .setting-inner {
+        max-height: calc(100vh - 120px);
+        overflow: auto;
+      }
+    }
+  }
+}
+</style>
