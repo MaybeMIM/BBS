@@ -69,7 +69,7 @@ const editorConfig = {
           store.commit('updateLoginUserInfo', null)
           return
         }
-        message.success.error(responseData.info)
+        message.error(responseData.info)
       }
     }
   }
