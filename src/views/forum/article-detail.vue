@@ -199,6 +199,7 @@ async function downloadAttachment (fileId) {
     currentUserInfo.userId === articleInfo.value.userId
   ) {
     download(fileId)
+    return
   }
   // 获取用户积分
   let result = await getUserIntegral({ fileId })
@@ -321,8 +322,36 @@ onMounted(() => {
         a {
           color: #03a3ff;
         }
+
+        /* 基本样式 (原有的基本样式不生效) */
+        h1 {
+          font-size: 2em;
+          font-weight: bold;
+          margin: 0.67em 0;
+        }
+
+        h2 {
+          font-size: 1.5em;
+          font-weight: bold;
+          margin: 0.83em 0;
+        }
+
+        h3 {
+          font-size: 1.17em;
+          font-weight: bold;
+          margin: 1em 0;
+        }
         p {
-          margin: 15px 0;
+          margin: 1em 0;
+        }
+        ul,
+        ol {
+          margin: 1em 0;
+          padding-left: 1.5em;
+        }
+
+        li {
+          margin: 0.5em 0;
         }
       }
     }
