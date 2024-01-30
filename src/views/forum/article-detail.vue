@@ -26,7 +26,11 @@
       :style="{ width: proxy.globalInfo.bodyWidth - 300 + 'px' }"
     >
       <div class="article-detail">
-        <div class="title">{{ articleInfo.title }}</div>
+        <div class="title">
+          {{ articleInfo.title }}
+          <el-tag v-if="articleInfo.status === 0" type="danger">待审核</el-tag>
+        </div>
+        <!-- 用户信息 -->
         <div class="user-info">
           <Avatar :userId="articleInfo.userId" :width="50"></Avatar>
           <div class="user-info-detail">
@@ -45,6 +49,13 @@
                   articleInfo.readCount === 0 ? '阅读' : articleInfo.readCount
                 }}
               </span>
+              <!-- 编辑文章 只有当前用户为发布文章的作者才显示 -->
+              <router-link
+                v-if="articleInfo.userId == currentUserInfo.userId"
+                class="a-link edit-btn"
+                :to="`/editPost/${articleDoLike.articleId}`"
+                ><span class="iconfont icon-edit">编辑</span></router-link
+              >
             </div>
           </div>
         </div>
@@ -87,6 +98,27 @@
         </div>
       </div>
     </div>
+    <!-- 目录 -->
+    <div class="toc-panel">
+      <div class="top-container">
+        <div class="toc-title">目录</div>
+        <div class="toc-list">
+          <template v-if="tocArray.length === 0">
+            <div class="no-toc">未解析到目录</div>
+          </template>
+          <template v-else>
+            <div v-for="toc in tocArray">
+              <span
+                :class="['toc-item', toc.id === activeAnchor ? 'active' : '']"
+                :style="{ 'padding-left': toc.level * 10 + 'px' }"
+                @click="gotoAnchor(toc.id)"
+                >{{ toc.title }}</span
+              >
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- 左侧快捷操作 点赞、评论、附件-->
   <div class="quick-panel" :style="{ left: quickPanelLeft + 'px' }">
@@ -120,7 +152,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, onMounted, nextTick } from 'vue'
+import {
+  ref,
+  onUnmounted,
+  getCurrentInstance,
+  onMounted,
+  nextTick,
+  watch
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import confirm from '@/utils/confirm'
 import { getArticleDetail, articleDoLike, getUserIntegral } from '@/model/api'
@@ -134,7 +173,6 @@ import 'highlight.js/styles/atom-one-light.css'
 
 const { proxy } = getCurrentInstance()
 const route = useRoute()
-const router = useRouter()
 
 // 文章详情信息
 const articleInfo = ref({})
@@ -158,6 +196,8 @@ async function getArticleDetails (articleId) {
   imagePreview()
   // 代码高亮
   highLightCode()
+  // 生成目录
+  makeToc()
 }
 
 // 快捷操作的位置
@@ -186,17 +226,26 @@ async function handleLike () {
   articleInfo.value.goodCount = articleInfo.value.goodCount + goodCount
 }
 
+const currentUserInfo = ref({})
+// 监听登录的用户信息 登录之后才会改变当前用户信息这个状态
+watch(
+  () => store.state.loginUserInfo,
+  (newVal, oldVal) => {
+    currentUserInfo.value = newVal || {}
+  },
+  { immediate: true, deep: true }
+)
+
 // 下载附件
 async function downloadAttachment (fileId) {
-  const currentUserInfo = store.getters.getLoginUserInfo
-  if (!currentUserInfo) {
+  if (!currentUserInfo.value) {
     store.commit('showLogin', true)
     return
   }
   // 附件需要 0 积分  当前用户等于发表文章作者 直接跳过
   if (
     attachment.value.integral === 0 ||
-    currentUserInfo.userId === articleInfo.value.userId
+    currentUserInfo.value.userId === articleInfo.value.userId
   ) {
     download(fileId)
     return
@@ -266,13 +315,84 @@ function updateCommentCount (commentCount) {
   articleInfo.value.commentCount = commentCount
 }
 
+// 目录
+const tocArray = ref([])
+// 点击的目录节点
+const activeAnchor = ref(null)
+// 生成目录节点
+function makeToc () {
+  nextTick(() => {
+    const tocTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+    // 获取所有h标签
+    const contentDom = document.querySelector('#detail')
+    const childNodes = contentDom.childNodes
+
+    let index = 0 // 下标要拿到标签元素再增加 文字内容在循环中也算一个 item 但是 tagName 为 undefined
+    childNodes.forEach(item => {
+      let tagName = item.tagName
+      if (tagName === undefined || !tocTags.includes(tagName.toUpperCase())) {
+        return true
+      }
+      index++
+
+      let id = 'toc' + index
+      item.setAttribute('id', id)
+      tocArray.value.push({
+        id,
+        title: item.innerText,
+        level: Number.parseInt(tagName.substring(1)),
+        // 文字内容的标签 距离 页面顶部的距离
+        offsetTop: item.offsetTop
+      })
+    })
+  })
+}
+
+// 跳转目录节点
+function gotoAnchor (id) {
+  const dom = document.querySelector('#' + id)
+  dom.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  })
+}
+
+// 监听滚动条 更新目录
+function listenerScroll () {
+  let currenScrollTop = getScrollTop()
+  tocArray.value.some((item, index) => {
+    // 判断当前页面位置是否处于两个目录之间的位置
+    if (
+      (index < tocArray.value.length - 1 &&
+        currenScrollTop >= tocArray.value[index].offsetTop &&
+        currenScrollTop < tocArray.value[index + 1].offsetTop) ||
+      (index === tocArray.value.length - 1 &&
+        currenScrollTop >= tocArray.value[index].offsetTop)
+    ) {
+      activeAnchor.value = item.id
+      return true
+    }
+  })
+}
+
+// 获取滚动条当前位置高度
+function getScrollTop () {
+  return document.documentElement.scrollTop || document.body.scrollTop
+}
 onMounted(() => {
   getArticleDetails(route.params.articleId)
+  // 监听滚动条
+  window.addEventListener('scroll', listenerScroll, false)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', listenerScroll, false)
 })
 </script>
 
 <style lang="scss">
 .article-detail-body {
+  position: relative;
   color: #c4c4c4;
   .board-info {
     line-height: 40px;
@@ -307,6 +427,11 @@ onMounted(() => {
             }
             .iconfont::before {
               padding-right: 3px;
+            }
+            .edit-btn {
+              .iconfont {
+                font-size: 14px;
+              }
             }
           }
         }
@@ -354,32 +479,32 @@ onMounted(() => {
           margin: 0.5em 0;
         }
       }
-    }
-    .attachment-panel {
-      margin-top: 20px;
-      padding: 20px;
-      background: rgb(0, 0, 0, 0.1);
-      .title {
-        font-size: 18px;
-      }
-      .attachment-info {
-        display: flex;
-        align-items: center;
-        color: #9f9f9f;
-        margin-top: 10px;
-        .item {
-          margin-right: 10px;
+      .attachment-panel {
+        margin-top: 20px;
+        padding: 20px;
+        background: rgb(0, 0, 0, 0.1);
+        .title {
+          font-size: 18px;
         }
-        .icon-zip {
-          font-size: 20px;
-          color: #03a3ff;
-        }
-        .file-name {
-          color: #03a3ff;
-        }
-        .integral {
-          color: red;
-          padding: 0 5px;
+        .attachment-info {
+          display: flex;
+          align-items: center;
+          color: #9f9f9f;
+          margin-top: 10px;
+          .item {
+            margin-right: 10px;
+          }
+          .icon-zip {
+            font-size: 20px;
+            color: #03a3ff;
+          }
+          .file-name {
+            color: #03a3ff;
+          }
+          .integral {
+            color: red;
+            padding: 0 5px;
+          }
         }
       }
     }
@@ -387,6 +512,52 @@ onMounted(() => {
       padding: 20px;
       margin-top: 20px;
       background: rgb(0, 0, 0, 0.1);
+    }
+  }
+  .toc-panel {
+    position: absolute;
+    top: 46px;
+    right: 0;
+    width: 285px;
+    color: #000;
+    .top-container {
+      position: fixed;
+      background: #fff;
+      width: 285px;
+      .toc-title {
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+      .toc-list {
+        max-height: calc(100vh - 200px);
+        overflow: auto;
+        padding: 5px;
+        .no-toc {
+          text-align: center;
+          line-height: 40px;
+          font-size: 14px;
+        }
+        .toc-item {
+          display: block;
+          line-height: 35px;
+          cursor: pointer;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          color: #555666;
+          border-radius: 3px;
+          font-size: 14px;
+          border-left: 2px solid #fff;
+          &:hover {
+            background: #ddd;
+          }
+        }
+        .active {
+          border-radius: 0px 3px 3px 0px;
+          border-left: 2px solid var(--link);
+          background: #ddd;
+        }
+      }
     }
   }
 }
