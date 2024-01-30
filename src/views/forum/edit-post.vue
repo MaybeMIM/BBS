@@ -128,6 +128,7 @@ import {
   updateArticle
 } from '@/model/api.js'
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 
 const { proxy } = getCurrentInstance()
 
@@ -224,7 +225,7 @@ async function update () {
     false,
     responseData => {
       // errorCallback
-      ElMessageBox.alert(responseData.info, '错误', {
+      ElMessageBox.alert(responseData.info, '⭐错误⭐', {
         'show-close': false,
         callback: action => {
           // 有错误的话 回退到上一步
