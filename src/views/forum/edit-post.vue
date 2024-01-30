@@ -83,6 +83,14 @@
                 v-model:modalValue="formData.attachment"
               ></AttachmentSelector>
             </el-form-item>
+            <el-form-item label="积分" prop="integral">
+              <el-input
+                clearable
+                placeholder="请输入积分"
+                v-model="formData.integral"
+              ></el-input>
+              <span class="tips">附件下载积分,0 表示无需积分下载</span>
+            </el-form-item>
             <el-form-item label="" prop="">
               <el-button type="primary" :style="{ width: '100%' }"
                 >保存</el-button
@@ -181,6 +189,49 @@ function getArticleDetail () {
     }
   })
 }
+
+async function update () {
+  let result = await editArticleDetail(
+    { articleId: articleId.value },
+    false,
+    responseData => {
+      // errorCallback
+      ElMessageBox.alert(responseData.info, '错误', {
+        'show-close': false,
+        callback: action => {
+          // 有错误的话 回退到上一步
+          router.go(-1)
+        }
+      })
+    }
+  )
+  if (!result) return
+
+  let articleInfo = result.data.forumArticle
+  // 设置编辑器
+  editorType.value = articleInfo.editorType
+
+  // 设置板块信息
+  articleInfo.boardIds = []
+  // 先放父级id 如果有子板块 判断不为空 也push
+  articleInfo.boardIds.push(articleInfo.pBoardId)
+  if (articleInfo.boardId !== null && articleInfo.boardId != 0) {
+    articleInfo.boardIds.push(articleInfo.boardId)
+  }
+
+  // 设置封面信息
+  if (articleInfo.cover) {
+    articleInfo.cover = { imageUrl: articleInfo.cover }
+  }
+
+  // 设置附件
+  if (result.data.attachment) {
+    articleInfo.attachment = { name: result.data.attachment.fileName }
+    articleInfo.integral = result.data.attachment.integral
+  }
+
+  formData.value = articleInfo
+}
 </script>
 
 <style lang="scss">
@@ -211,6 +262,10 @@ function getArticleDetail () {
       .setting-inner {
         max-height: calc(100vh - 120px);
         overflow: auto;
+      }
+      .tips {
+        color: #868686;
+        font-size: 13px;
       }
     }
   }
