@@ -20,7 +20,7 @@
             "
             v-if="modalValue && modalValue.imageUrl"
           />
-          <span class="iconfont icon-add"></span>
+          <span class="iconfont icon-add" v-else></span>
         </template>
       </div>
     </el-upload>
