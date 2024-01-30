@@ -74,3 +74,13 @@ export function editArticleDetail (params, showError, errorCallback) {
     errorCallback
   })
 }
+
+// 发布文章
+export function postArticle (params) {
+  return Request({ url: '/forum/postArticle', params })
+}
+
+// 编辑文章
+export function updateArticle (params) {
+  return Request({ url: '/forum/updateArticle', params })
+}

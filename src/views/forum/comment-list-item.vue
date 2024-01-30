@@ -239,6 +239,7 @@ async function opTop (data) {
         }
       }
       .tag-author {
+        margin-right: 5px;
         background: var(--pink);
         font-size: 12px;
         color: #fff;

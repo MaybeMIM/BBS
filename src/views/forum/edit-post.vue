@@ -33,6 +33,7 @@
               v-if="editorType === 1"
               v-model="formData.markdownContent"
               :height="markdownHeight"
+              @htmlContent="setHtmlContent"
             ></EditorMarkdown>
           </el-form-item>
         </el-card>
@@ -48,6 +49,7 @@
               <el-input
                 clearable
                 placeholder="提示信息"
+                :maxlength="100"
                 v-model.trim="formData.title"
               ></el-input>
             </el-form-item>
@@ -72,7 +74,7 @@
                 placeholder="请选择摘要"
                 type="textarea"
                 :rows="5"
-                :maxlength="150"
+                :maxlength="200"
                 resize="none"
                 show-word-limit
                 v-model="formData.summary"
@@ -83,7 +85,11 @@
                 v-model:modalValue="formData.attachment"
               ></AttachmentSelector>
             </el-form-item>
-            <el-form-item label="积分" prop="integral">
+            <el-form-item
+              label="积分"
+              prop="integral"
+              v-if="formData.attachment"
+            >
               <el-input
                 clearable
                 placeholder="请输入积分"
@@ -92,7 +98,10 @@
               <span class="tips">附件下载积分,0 表示无需积分下载</span>
             </el-form-item>
             <el-form-item label="" prop="">
-              <el-button type="primary" :style="{ width: '100%' }"
+              <el-button
+                type="primary"
+                :style="{ width: '100%' }"
+                @click="submit"
                 >保存</el-button
               >
             </el-form-item>
@@ -108,9 +117,16 @@ import { ref, watch, getCurrentInstance, nextTick } from 'vue'
 import EditorMarkdown from '@/components/editor-markdown.vue'
 import EditHtml from '@/components/editor-html.vue'
 import CoverUpload from '@/components/cover-upload.vue'
-import AttachmentSelector from '../../components/attachment-selector.vue'
+import AttachmentSelector from '@/components/attachment-selector.vue'
 import confirm from '@/utils/confirm.js'
-import { postCommentBoardList, editArticleDetail } from '@/model/api.js'
+import message from '@/utils/message.js'
+import verify from '@/utils/verify.js'
+import {
+  postCommentBoardList,
+  editArticleDetail,
+  postArticle,
+  updateArticle
+} from '@/model/api.js'
 import { useRoute, useRouter } from 'vue-router'
 
 const { proxy } = getCurrentInstance()
@@ -124,7 +140,13 @@ const htmlEditorHeight = window.innerHeight - 156
 const formData = ref({})
 const form = ref()
 const rules = {
-  title: [{ required: true, message: '请输入内容' }]
+  title: [{ required: true, message: '请输入标题' }],
+  boardId: [{ required: true, message: '请选择板块' }],
+  content: [{ required: true, message: '请输入正文' }],
+  integral: [
+    { required: true, message: '请输入所需积分' },
+    { validator: verify.number, message: '积分只能是数字' }
+  ]
 }
 
 // 编辑器类型 0:富文本 1:markdown
@@ -164,6 +186,11 @@ async function loadBoardList () {
 }
 loadBoardList()
 
+// 设置markdown编辑器的富文本信息
+function setHtmlContent (htmlContent) {
+  formData.value.content = htmlContent
+}
+
 // 切换编辑器
 function changeEditor () {
   confirm('切换编辑器会清空正在编辑的内容，确定切换吗?', () => {
@@ -175,6 +202,7 @@ function changeEditor () {
   })
 }
 
+// 获取文章数据
 function getArticleDetail () {
   nextTick(() => {
     form.value.resetFields()
@@ -231,6 +259,58 @@ async function update () {
   }
 
   formData.value = articleInfo
+}
+
+// 提交信息
+function submit () {
+  form.value.validate(async valid => {
+    if (!valid) return
+
+    let params = Object.assign({}, formData.value)
+    // 设置分类
+    if (params.boardIds.length === 1) {
+      // 父级
+      params.pBoardId = params.boardIds[0]
+    } else if (params.boardIds.length === 2) {
+      params.pBoardId = params.boardIds[0]
+      params.boardId = params.boardIds[1]
+    }
+    delete params.boardIds
+
+    // 设置编辑器类型
+    params.editorType = editorType.value
+
+    // 获取编辑的html内容 (删除除了img标签之外的所有HTML标签)
+    const contentText = params.content.replace(/<(?!img).*?>/g, '')
+    if (contentText == '') {
+      message.warning('正文不能为空')
+      return
+    }
+
+    if (params.attachment !== null) {
+      params.attachmentType = 1
+    } else {
+      params.attachmentType = 0
+    }
+
+    // 如果不是文件类型，则不需要上传该值(即编辑时没有变动这些值 就不需要，变动了值会变为File类型)
+    // 封面
+    if (!(params.attachment instanceof File)) {
+      delete params.cover
+    }
+    // 附件
+    if (!(params.attachment instanceof File)) {
+      delete params.attachment
+    }
+
+    let result = params.articleId
+      ? await updateArticle(params)
+      : await postArticle(params)
+
+    if (!result) return
+    message.success('保存成功')
+    router.push(`/post/${result.data}`)
+  })
 }
 </script>
 
