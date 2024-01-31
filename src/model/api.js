@@ -84,3 +84,8 @@ export function postArticle (params) {
 export function updateArticle (params) {
   return Request({ url: '/forum/updateArticle', params })
 }
+
+// 获取用户信息(个人中心)
+export function getUserInfo (params, errorCallback) {
+  return Request({ url: '/ucenter/getUserInfo', params, errorCallback })
+}
