@@ -12,7 +12,9 @@
       <div class="user-side">
         <!-- 头像一栏信息 -->
         <div class="avatar-panel">
-          <div class="edit-btn" v-if="isCurrentUser">修改资料</div>
+          <div class="edit-btn" v-if="isCurrentUser" @click="showEditUserInfo">
+            修改资料
+          </div>
           <div class="avatar-inner">
             <Avatar :userId="userInfo.userId" :width="120"></Avatar>
           </div>
@@ -78,6 +80,10 @@
         </div>
       </div>
     </div>
+    <EditUserInfo
+      ref="editUserInfo"
+      @reset-user-info="handleReset"
+    ></EditUserInfo>
   </div>
 </template>
 
@@ -86,6 +92,7 @@ import { ref, watch, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DataList from '@/components/data-list.vue'
 import ArticleListItem from '@/views/forum/article-list-item.vue'
+import EditUserInfo from './edit-user-info.vue'
 import { getUserInfo, loadUserArticle } from '@/model/api.js'
 import store from '@/store'
 
@@ -177,6 +184,17 @@ async function loadArticle () {
 
   articleListInfo.value = result.data
 }
+
+// 修改用户信息
+const editUserInfo = ref()
+function showEditUserInfo () {
+  editUserInfo.value.showEditUserInfo(userInfo.value)
+}
+
+// 更新用户信息
+function handleReset (data) {
+  userInfo.value = data
+}
 </script>
 
 <style lang="scss">
@@ -203,7 +221,7 @@ async function loadArticle () {
           position: absolute;
           top: 10px;
           right: 10px;
-          font-size: 13px;
+          font-size: 14px;
           color: var(--link);
           cursor: pointer;
         }

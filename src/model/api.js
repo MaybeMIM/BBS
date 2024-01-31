@@ -96,6 +96,6 @@ export function loadUserArticle (params, showLoading) {
 }
 
 // 更新用户信息(个人中心)
-export function updateUserInfo (params, showLoading) {
-  return Request({ url: '/ucenter/updateUserInfo', params, showLoading })
+export function updateUserInfo (params) {
+  return Request({ url: '/ucenter/updateUserInfo', params })
 }
