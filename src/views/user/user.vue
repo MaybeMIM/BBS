@@ -58,7 +58,25 @@
           </div>
         </div>
       </div>
-      <div class="article-panel"></div>
+      <div class="article-panel">
+        <el-tabs :model-value="activeTabName" @tab-change="changeTab">
+          <el-tab-pane label="发帖" :name="0"></el-tab-pane>
+          <el-tab-pane label="评论" :name="1"></el-tab-pane>
+          <el-tab-pane label="点赞" :name="2"></el-tab-pane>
+        </el-tabs>
+        <div class="article-list">
+          <DataList
+            :loading="loading"
+            :dataSource="articleListInfo"
+            emptyMsg="暂无相关文章"
+            @loadData="loadArticle"
+          >
+            <template #default="{ data }">
+              <ArticleListItem :data="data" />
+            </template>
+          </DataList>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -66,7 +84,9 @@
 <script setup>
 import { ref, watch, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getUserInfo } from '@/model/api.js'
+import DataList from '@/components/data-list.vue'
+import ArticleListItem from '@/views/forum/article-list-item.vue'
+import { getUserInfo, loadUserArticle } from '@/model/api.js'
 import store from '@/store'
 
 const { proxy } = getCurrentInstance()
@@ -76,6 +96,11 @@ const router = useRouter()
 const userId = ref(null)
 const userInfo = ref({})
 const isCurrentUser = ref(false)
+
+const articleListInfo = ref({})
+const loading = ref(false)
+
+const activeTabName = ref(0)
 
 // 监听登录用户信息
 // 登录后
@@ -96,6 +121,7 @@ watch(
       userId.value = newVal
       resetCurrentUser()
       loadUserInfo()
+      loadArticle()
     }
   },
   { immediate: true, deep: true }
@@ -125,6 +151,31 @@ function resetCurrentUser () {
   } else {
     isCurrentUser.value = false
   }
+}
+
+// 右侧文章
+function changeTab (type) {
+  activeTabName.value = type
+  loadArticle()
+}
+
+async function loadArticle () {
+  if (loading.value) return
+  loading.value = true
+
+  let params = {
+    pageNo: articleListInfo.value.pageNo,
+    type: activeTabName.value,
+    userId: userId.value
+  }
+
+  // 有了骨架就不需要遮罩loading
+  let result = await loadUserArticle(params, false)
+
+  loading.value = false
+  if (!result) return
+
+  articleListInfo.value = result.data
 }
 </script>
 
@@ -211,6 +262,8 @@ function resetCurrentUser () {
     }
     .article-panel {
       flex: 1;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0 10px 10px 10px;
     }
   }
 }

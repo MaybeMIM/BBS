@@ -89,3 +89,13 @@ export function updateArticle (params) {
 export function getUserInfo (params, errorCallback) {
   return Request({ url: '/ucenter/getUserInfo', params, errorCallback })
 }
+
+// 获取用户发帖(个人中心)
+export function loadUserArticle (params, showLoading) {
+  return Request({ url: '/ucenter/loadUserArticle', params, showLoading })
+}
+
+// 更新用户信息(个人中心)
+export function updateUserInfo (params, showLoading) {
+  return Request({ url: '/ucenter/updateUserInfo', params, showLoading })
+}
