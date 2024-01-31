@@ -50,7 +50,8 @@ const props = defineProps({
     default: '30%'
   },
   top: {
-    type: String
+    type: String,
+    default: '80px'
   },
   buttons: {
     type: Array

@@ -99,3 +99,11 @@ export function loadUserArticle (params, showLoading) {
 export function updateUserInfo (params) {
   return Request({ url: '/ucenter/updateUserInfo', params })
 }
+// 用户积分记录(个人中心)
+export function loadUserIntegralRecord (params, showLoading) {
+  return Request({
+    url: '/ucenter/loadUserIntegralRecord',
+    params,
+    showLoading
+  })
+}

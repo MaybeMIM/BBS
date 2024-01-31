@@ -35,7 +35,11 @@
         <div class="user-extend-panel">
           <div class="info-item">
             <div class="label iconfont icon-integral">积分</div>
-            <div class="value a-link" v-if="isCurrentUser">
+            <div
+              class="value a-link"
+              v-if="isCurrentUser"
+              @click="showIntegralRecord"
+            >
               {{ userInfo.currentIntegral }}
             </div>
             <div class="value" v-else>
@@ -80,10 +84,13 @@
         </div>
       </div>
     </div>
+    <!-- 编辑用户信息 -->
     <EditUserInfo
       ref="editUserInfo"
       @reset-user-info="handleReset"
     ></EditUserInfo>
+    <!-- 用户积分 -->
+    <UserIntegral ref="integralRecord"></UserIntegral>
   </div>
 </template>
 
@@ -93,6 +100,7 @@ import { useRoute, useRouter } from 'vue-router'
 import DataList from '@/components/data-list.vue'
 import ArticleListItem from '@/views/forum/article-list-item.vue'
 import EditUserInfo from './edit-user-info.vue'
+import UserIntegral from './user-integral.vue'
 import { getUserInfo, loadUserArticle } from '@/model/api.js'
 import store from '@/store'
 
@@ -194,6 +202,12 @@ function showEditUserInfo () {
 // 更新用户信息
 function handleReset (data) {
   userInfo.value = data
+}
+
+// 用户积分记录
+const integralRecord = ref()
+function showIntegralRecord () {
+  integralRecord.value.showRecord()
 }
 </script>
 
