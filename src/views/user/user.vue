@@ -65,7 +65,11 @@
         </div>
       </div>
       <div class="article-panel">
-        <el-tabs :model-value="activeTabName" @tab-change="changeTab">
+        <el-tabs
+          :model-value="activeTabName"
+          @tab-change="changeTab"
+          :stretch="true"
+        >
           <el-tab-pane label="发帖" :name="0"></el-tab-pane>
           <el-tab-pane label="评论" :name="1"></el-tab-pane>
           <el-tab-pane label="点赞" :name="2"></el-tab-pane>

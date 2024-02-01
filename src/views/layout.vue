@@ -181,8 +181,50 @@
     <div class="body-content">
       <router-view />
     </div>
+    <div class="footer">
+      <div
+        class="footer-content"
+        :style="{ width: proxy.globalInfo.bodyWidth + 'px' }"
+      >
+        <el-row>
+          <el-col :span="6" class="item">
+            <div class="logo">
+              <div class="logo-letter">
+                <img
+                  src="../assets/bbs_nav_icon.svg"
+                  alt="bbs_icon"
+                  class="bbs_icon"
+                />
+                <div class="info">简易但功能还凑合的编程在线论坛网站(BBS)</div>
+              </div>
+            </div></el-col
+          >
+          <el-col :span="6" class="item">
+            <div class="title">网站相关</div>
+            <div>
+              <div>
+                <a href="https://space.bilibili.com/499388891">视频教学</a>
+              </div>
+              <div>
+                <a href="https://developer.mozilla.org/zh-CN/docs/Web"
+                  >前端知识</a
+                >
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6" class="item">
+            <div class="title">视频相关</div>
+          </el-col>
+          <el-col :span="6" class="item">
+            <div class="title">GitHub仓库</div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
     <!-- 登录 注册 -->
     <Login ref="login" />
+    <!-- 回到顶部 -->
+    <el-backtop :right="100" :bottom="100"></el-backtop>
   </div>
 </template>
 
@@ -472,6 +514,7 @@ onMounted(() => {
 .body-content {
   margin-top: 60px;
   position: relative;
+  min-height: calc(100vh - 210px);
 }
 
 .message-item {
@@ -491,6 +534,41 @@ onMounted(() => {
     line-height: 20px;
     color: #fff;
     background: #f56c6c;
+  }
+}
+
+.footer {
+  background: #c9c9c9;
+  height: 140px;
+  margin-top: 10px;
+  .footer-content {
+    margin: 0 auto;
+    padding-top: 10px;
+    .item {
+      text-align: left;
+      .title {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      a {
+        font-size: 14px;
+        color: var(--text);
+        line-height: 25px;
+      }
+    }
+
+    .logo-letter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .bbs_icon {
+        width: 120px;
+      }
+      .info {
+        font-size: 18px;
+      }
+    }
   }
 }
 </style>
