@@ -50,6 +50,11 @@ const router = createRouter({
           component: () => import('@/views/user/message-list.vue')
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: '404 Error',
+      component: () => import('@/views/error404.vue')
     }
   ]
 })
