@@ -124,6 +124,7 @@
               size="large"
               placeholder="请输入验证码"
               v-model.trim="formData.checkCode"
+              @keyup.enter="submit"
             >
               <template #prefix>
                 <span class="iconfont icon-checkcode"></span>
@@ -221,8 +222,7 @@ import store from '@/store'
 defineExpose({ showPanel })
 
 const { proxy } = getCurrentInstance()
-const route = useRoute()
-const router = useRouter()
+
 // 0：注册 1：登录 2：找回密码
 const onType = ref()
 
@@ -239,11 +239,11 @@ const dialogConfig = reactive({
 // 发生邮箱验证码弹框
 const SendMailCode = reactive({
   visible: false,
-  title: '发生邮箱验证码',
+  title: '发送邮箱验证码',
   buttons: [
     {
       type: 'primary',
-      text: '发生验证码',
+      text: '发送验证码',
       click: () => {
         sendEmailCode()
       }
