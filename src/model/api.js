@@ -99,6 +99,7 @@ export function loadUserArticle (params, showLoading) {
 export function updateUserInfo (params) {
   return Request({ url: '/ucenter/updateUserInfo', params })
 }
+
 // 用户积分记录(个人中心)
 export function loadUserIntegralRecord (params, showLoading) {
   return Request({
@@ -106,4 +107,14 @@ export function loadUserIntegralRecord (params, showLoading) {
     params,
     showLoading
   })
+}
+
+// 获取消息数量(消息中心)
+export function getMessageCount () {
+  return Request({ url: '/ucenter/getMessageCount' })
+}
+
+// 退出登录
+export function logout () {
+  return Request({ url: '/logout' })
 }

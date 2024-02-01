@@ -77,18 +77,72 @@
           <!-- 显示用户头像以及消息 -->
           <template v-if="userInfo.userId">
             <div class="message-info">
-              <el-dropdown>
+              <el-dropdown @command="handleCommand">
                 <!-- 🔔 消息按钮与消息数量 -->
-                <el-badge :value="12" class="item">
+                <el-badge
+                  :value="messageCountInfo.total"
+                  class="item"
+                  :hidden="
+                    messageCountInfo.total === null ||
+                    messageCountInfo.total === 0
+                  "
+                >
                   <div class="iconfont icon-message"></div>
                 </el-badge>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>回复我的</el-dropdown-item>
-                    <el-dropdown-item>赞了我的文章</el-dropdown-item>
-                    <el-dropdown-item>赞了我的评论</el-dropdown-item>
-                    <el-dropdown-item>下载了我的文章</el-dropdown-item>
-                    <el-dropdown-item>系统消息</el-dropdown-item>
+                    <el-dropdown-item command="replay" class="message-item">
+                      <span class="text">回复我的</span>
+                      <span class="count-tag" v-if="messageCountInfo.replay">{{
+                        messageCountInfo.reply > 99
+                          ? '99+'
+                          : messageCountInfo.reply
+                      }}</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item command="likePost" class="message-item"
+                      ><span class="text">赞了我的文章</span>
+                      <span
+                        class="count-tag"
+                        v-if="messageCountInfo.likePost"
+                        >{{
+                          messageCountInfo.likePost > 99
+                            ? '99+'
+                            : messageCountInfo.likePost
+                        }}</span
+                      >
+                    </el-dropdown-item>
+                    <el-dropdown-item
+                      command="downloadAttachment"
+                      class="message-item"
+                      ><span class="text">赞了我的评论</span>
+                      <span
+                        class="count-tag"
+                        v-if="messageCountInfo.downloadAttachment"
+                        >{{
+                          messageCountInfo.downloadAttachment > 99
+                            ? '99+'
+                            : messageCountInfo.downloadAttachment
+                        }}</span
+                      >
+                    </el-dropdown-item>
+                    <el-dropdown-item command="likeComment" class="message-item"
+                      ><span class="text">下载了我的文章</span>
+                      <span
+                        class="count-tag"
+                        v-if="messageCountInfo.likeComment"
+                        >{{
+                          messageCountInfo.likeComment > 99
+                            ? '99+'
+                            : messageCountInfo.likeComment
+                        }}</span
+                      >
+                    </el-dropdown-item>
+                    <el-dropdown-item command="sys" class="message-item"
+                      ><span class="text">系统消息</span>
+                      <span class="count-tag" v-if="messageCountInfo.sys">{{
+                        messageCountInfo.sys > 99 ? '99+' : messageCountInfo.sys
+                      }}</span>
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -96,11 +150,17 @@
             <div class="user-info">
               <el-dropdown>
                 <!-- 头像 -->
-                <avatar :userId="userInfo.userId" :width="50"></avatar>
+                <avatar
+                  :userId="userInfo.userId"
+                  :width="50"
+                  :addLink="false"
+                ></avatar>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>我的主页</el-dropdown-item>
-                    <el-dropdown-item>退出</el-dropdown-item>
+                    <el-dropdown-item @click="gotoUserPage(userInfo.userId)"
+                      >我的主页</el-dropdown-item
+                    >
+                    <el-dropdown-item @click="logOut">退出</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -127,11 +187,18 @@
 </template>
 
 <script setup>
-import { getUserInfos, loadBoardList } from '@/model/api'
+import {
+  getUserInfos,
+  loadBoardList,
+  getMessageCount,
+  logout
+} from '@/model/api'
 import { ref, watch, getCurrentInstance, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Login from './login.vue'
 import store from '@/store'
-import { useRouter } from 'vue-router'
+import confirm from '@/utils/confirm.js'
+
 const { proxy } = getCurrentInstance()
 
 const router = useRouter()
@@ -250,6 +317,47 @@ function newPost () {
   }
 }
 
+// 消息中心
+function handleCommand (type) {
+  router.push(`/user/message/${type}`)
+}
+
+// 消息数量
+const messageCountInfo = ref({})
+
+async function loadMessageCount () {
+  let result = await getMessageCount()
+
+  if (!result) return
+
+  messageCountInfo.value = result.data
+}
+
+function gotoUserPage (userId) {
+  router.push(`/user/${userId}`)
+}
+
+// 监听用户状态 登录之后再请求消息中心的数据
+watch(
+  () => store.state.loginUserInfo,
+  (newVal, oldVal) => {
+    if (newVal) {
+      loadMessageCount()
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+function logOut () {
+  confirm('确定要退出吗?', async () => {
+    let result = await logout()
+
+    if (!result) return
+
+    store.commit('updateLoginUserInfo', null)
+  })
+}
+
 onMounted(() => {
   initScroll()
   getUserInfo()
@@ -317,12 +425,12 @@ onMounted(() => {
       margin-left: 3px;
     }
     .message-info {
+      margin: 0 25px 0 5px;
+      cursor: pointer;
       .icon-message {
         font-size: 25px;
         color: rgb(147, 147, 147);
       }
-      margin: 0 25px 0 5px;
-      cursor: pointer;
     }
   }
 }
@@ -353,5 +461,25 @@ onMounted(() => {
 .body-content {
   margin-top: 60px;
   position: relative;
+}
+
+.message-item {
+  display: flex;
+  justify-content: space-between;
+  .text {
+    flex: 1;
+  }
+  .count-tag {
+    display: inline-block;
+    min-width: 25px;
+    height: 20px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    background: #f56c6c;
+  }
 }
 </style>
