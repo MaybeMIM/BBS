@@ -114,6 +114,11 @@ export function getMessageCount () {
   return Request({ url: '/ucenter/getMessageCount' })
 }
 
+// 获取消息数量(消息中心)
+export function loadMessageList (params, showLoading) {
+  return Request({ url: '/ucenter/loadMessageList', params, showLoading })
+}
+
 // 退出登录
 export function logout () {
   return Request({ url: '/logout' })

@@ -1,4 +1,4 @@
-import { createStore } from "vuex";
+import { createStore } from 'vuex'
 
 export default createStore({
   state: {
@@ -11,17 +11,19 @@ export default createStore({
     // 当前一级板块 (用于同步layout与article-list选中的板块)
     activePBoardId: 0,
     // 当前二级板块
-    activeBoardId: 0
+    activeBoardId: 0,
+    // 消息数量
+    messageCountInfo: {}
   },
   mutations: {
     // 点赞评论等操作 需要登录的状态，浏览文章等页面不需要登录 也就不需要登录弹框
-    updateLoginUserInfo(state, value) {
+    updateLoginUserInfo (state, value) {
       state.loginUserInfo = value
     },
-    showLogin(state, value) {
+    showLogin (state, value) {
       state.showLogin = value
     },
-    saveBoardList(state, value) {
+    saveBoardList (state, value) {
       state.boardList = value
     },
     setActivePBoardId: (state, value) => {
@@ -30,27 +32,40 @@ export default createStore({
     setActiveBoardId: (state, value) => {
       state.activeBoardId = value
     },
+    // 设置消息数
+    updateMessageCount: (state, value) => {
+      state.messageCountInfo = value
+    },
+    // 查看消息 总数量 - 查看类型的消息数量
+    readMessage: (state, value) => {
+      state.messageCountInfo.total =
+        state.messageCountInfo.total - state.messageCountInfo[value]
+      state.messageCountInfo[value] = 0
+    }
   },
   getters: {
-    getLoginUserInfo: (state) => {
+    getLoginUserInfo: state => {
       return state.loginUserInfo
     },
-    getBoardList: (state) => {
+    getBoardList: state => {
       return state.boardList
     },
     // boardId 父级id
-    getSubBoardList: (state) => (boardId) => {
+    getSubBoardList: state => boardId => {
       let board = state.boardList.find(item => {
         return item.boardId == boardId
       })
       return board ? board.children : []
     },
-    getActivePBoardId: (state) => {
+    getActivePBoardId: state => {
       return state.activePBoardId
     },
-    getActiveBoardId: (state) => {
+    getActiveBoardId: state => {
       return state.activeBoardId
     },
+    getMessageCountInfo: state => {
+      return state.messageCountInfo
+    }
   },
   actions: {},
   module: {}

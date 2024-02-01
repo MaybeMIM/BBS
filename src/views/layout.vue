@@ -91,9 +91,9 @@
                 </el-badge>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item command="replay" class="message-item">
+                    <el-dropdown-item command="reply" class="message-item">
                       <span class="text">回复我的</span>
-                      <span class="count-tag" v-if="messageCountInfo.replay">{{
+                      <span class="count-tag" v-if="messageCountInfo.reply">{{
                         messageCountInfo.reply > 99
                           ? '99+'
                           : messageCountInfo.reply
@@ -111,22 +111,8 @@
                         }}</span
                       >
                     </el-dropdown-item>
-                    <el-dropdown-item
-                      command="downloadAttachment"
-                      class="message-item"
-                      ><span class="text">赞了我的评论</span>
-                      <span
-                        class="count-tag"
-                        v-if="messageCountInfo.downloadAttachment"
-                        >{{
-                          messageCountInfo.downloadAttachment > 99
-                            ? '99+'
-                            : messageCountInfo.downloadAttachment
-                        }}</span
-                      >
-                    </el-dropdown-item>
                     <el-dropdown-item command="likeComment" class="message-item"
-                      ><span class="text">下载了我的文章</span>
+                      ><span class="text">赞了我的评论</span>
                       <span
                         class="count-tag"
                         v-if="messageCountInfo.likeComment"
@@ -134,6 +120,20 @@
                           messageCountInfo.likeComment > 99
                             ? '99+'
                             : messageCountInfo.likeComment
+                        }}</span
+                      >
+                    </el-dropdown-item>
+                    <el-dropdown-item
+                      command="downloadAttachment"
+                      class="message-item"
+                      ><span class="text">下载了我的文章</span>
+                      <span
+                        class="count-tag"
+                        v-if="messageCountInfo.downloadAttachment"
+                        >{{
+                          messageCountInfo.downloadAttachment > 99
+                            ? '99+'
+                            : messageCountInfo.downloadAttachment
                         }}</span
                       >
                     </el-dropdown-item>
@@ -331,11 +331,18 @@ async function loadMessageCount () {
   if (!result) return
 
   messageCountInfo.value = result.data
+  store.commit('updateMessageCount', result.data)
 }
 
-function gotoUserPage (userId) {
-  router.push(`/user/${userId}`)
-}
+// 监听消息数量 (便于在消息中心里查看消息之后，让当前消息数量同步，
+// 此组件会拿到消息数量并存入store中，消息中心会读取并更改)
+watch(
+  () => store.state.messageCountInfo,
+  (newVal, oldVal) => {
+    messageCountInfo.value = newVal || {}
+  },
+  { immediate: true, deep: true }
+)
 
 // 监听用户状态 登录之后再请求消息中心的数据
 watch(
@@ -347,6 +354,10 @@ watch(
   },
   { immediate: true, deep: true }
 )
+
+function gotoUserPage (userId) {
+  router.push(`/user/${userId}`)
+}
 
 function logOut () {
   confirm('确定要退出吗?', async () => {
