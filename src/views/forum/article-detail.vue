@@ -53,7 +53,7 @@
               <router-link
                 v-if="articleInfo.userId == currentUserInfo.userId"
                 class="a-link edit-btn"
-                :to="`/editPost/${articleDoLike.articleId}`"
+                :to="`/editPost/${articleInfo.articleId}`"
                 ><span class="iconfont icon-edit">编辑</span></router-link
               >
             </div>
