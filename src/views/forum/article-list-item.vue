@@ -41,6 +41,12 @@
           <span class="iconfont icon-comment" v-if="showComment">
             {{ data.commentCount === 0 ? '评论' : data.commentCount }}
           </span>
+          <span
+            class="iconfont icon-edit"
+            v-if="showEdit"
+            @click="editArticle(data.articleId)"
+            >编辑</span
+          >
         </div>
       </div>
 
@@ -53,15 +59,23 @@
 
 <script setup>
 import Cover from '@/components/cover.vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const props = defineProps({
   data: {
     type: Object
   },
   showComment: {
     type: Boolean
+  },
+  showEdit: {
+    type: Boolean
   }
 })
+
+function editArticle (articleId) {
+  router.push(`/editPost/${articleId}`)
+}
 </script>
 
 <style lang="scss">
@@ -122,6 +136,10 @@ const props = defineProps({
         }
         .iconfont::before {
           margin-right: 4px;
+        }
+        .icon-edit {
+          color: var(--link);
+          cursor: pointer;
         }
       }
     }
