@@ -28,6 +28,7 @@
         </div>
         <router-link :to="`/post/${data.articleId}`" class="article-title">
           <span v-if="data.topType === 1" class="top">置顶</span>
+          <span v-if="data.status === 0" class="tag no-audit">待审核</span>
           <span>{{ data.title }}</span>
         </router-link>
         <div class="article-summary">{{ data.summary }}</div>

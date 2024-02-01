@@ -251,12 +251,7 @@ async function opTop (data) {
       margin-top: 2px;
       font-size: 15px;
       line-height: 22px;
-      .tag {
-        margin-right: 5px;
-        font-size: 12px;
-        border-radius: 3px;
-        padding: 0 5px;
-      }
+
       .tag-topping {
         color: var(--pink);
         border: 1px solid var(--pink);

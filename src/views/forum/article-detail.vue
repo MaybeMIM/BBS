@@ -27,8 +27,13 @@
     >
       <div class="article-detail">
         <div class="title">
+          <span
+            class="tag no-audit"
+            v-if="articleInfo.status === 0"
+            type="danger"
+            >待审核</span
+          >
           {{ articleInfo.title }}
-          <el-tag v-if="articleInfo.status === 0" type="danger">待审核</el-tag>
         </div>
         <!-- 用户信息 -->
         <div class="user-info">
@@ -88,7 +93,11 @@
           </div>
         </div>
         <!-- 评论 -->
-        <div class="comment-panel" id="view-comment" v-if="showComment">
+        <div
+          class="comment-panel"
+          id="view-comment"
+          v-if="showComment && articleInfo.status === 1"
+        >
           <CommentList
             v-if="articleInfo.articleId"
             :article-id="articleInfo.articleId"
