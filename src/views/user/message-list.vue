@@ -84,7 +84,75 @@
           @loadData="loadMessage"
         >
           <template #default="{ data }">
-            {{ data.content }}
+            <!-- 系统消息 -->
+            <div class="message-item" v-if="data.messageType === 0">
+              <div class="message-content">
+                <span v-html="data.messageContent"></span>
+                <span class="create-time">{{ data.createTime }}</span>
+              </div>
+            </div>
+            <!-- 回复我的 -->
+            <div class="message-item" v-if="data.messageType === 1">
+              <avatar :userId="data.sendUserId" :width="50"></avatar>
+              <div class="message-content">
+                <div>
+                  <router-link :to="`/user/${data.sendUserId}`"
+                    >@{{ data.sendNickName }} </router-link
+                  >&nbsp;&nbsp;对我的文章【<router-link
+                    :to="`/post/${data.articleId}`"
+                    >{{ data.articleTitle }}</router-link
+                  >】发表了评论
+                  <span class="create-time">{{ data.createTime }}</span>
+                </div>
+                <div class="reply-content" v-html="data.messageContent"></div>
+              </div>
+            </div>
+            <!-- 赞了我的文章 -->
+            <div class="message-item" v-if="data.messageType === 2">
+              <avatar :userId="data.sendUserId" :width="50"></avatar>
+              <div class="message-content">
+                <div>
+                  <router-link :to="`/user/${data.sendUserId}`"
+                    >@{{ data.sendNickName }}</router-link
+                  >&nbsp;&nbsp;赞了我的文章【<router-link
+                    :to="`/post/${data.articleId}`"
+                    >{{ data.articleTitle }}</router-link
+                  >】
+                  <span class="create-time">{{ data.createTime }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- 赞了我的评论 -->
+            <div class="message-item" v-if="data.messageType === 3">
+              <avatar :userId="data.sendUserId" :width="50"></avatar>
+              <div class="message-content">
+                <div>
+                  <router-link :to="`/user/${data.sendUserId}`"
+                    >@{{ data.sendNickName }}</router-link
+                  >&nbsp;&nbsp;在文章中【<router-link
+                    :to="`/post/${data.articleId}`"
+                    >{{ data.articleTitle }}</router-link
+                  >】中赞了我的评论
+                  <span class="create-time">{{ data.createTime }}</span>
+                </div>
+                <div class="reply-content" v-html="data.messageContent"></div>
+              </div>
+            </div>
+            <!-- 下载了我的附件 -->
+            <div class="message-item" v-if="data.messageType === 4">
+              <avatar :userId="data.sendUserId" :width="50"></avatar>
+              <div class="message-content">
+                <div>
+                  <router-link :to="`/user/${data.sendUserId}`"
+                    >@{{ data.sendNickName }}</router-link
+                  >&nbsp;&nbsp;在文章【<router-link
+                    :to="`/post/${data.articleId}`"
+                    >{{ data.articleTitle }}</router-link
+                  >】中下载了我的附件
+                  <span class="create-time">{{ data.createTime }}</span>
+                </div>
+              </div>
+            </div>
           </template>
         </DataList>
       </div>
@@ -166,7 +234,7 @@ async function loadMessage () {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .message-center {
   .message-nav {
     font-size: initial;
@@ -206,6 +274,27 @@ async function loadMessage () {
         top: 5px;
         right: 0;
         font-size: 14px;
+      }
+    }
+  }
+  .message-list {
+    .message-item {
+      display: flex;
+      font-size: 14px;
+      align-items: center;
+      border-bottom: 1px solid #e4e7ed;
+      padding: 10px;
+      .message-content {
+        margin-left: 5px;
+        .create-time {
+          color: #c4c4c4;
+          margin-left: 10px;
+        }
+        .reply-content {
+          border-left: 2px solid #73c9ff;
+          padding-left: 5px;
+          margin-top: 5px;
+        }
       }
     }
   }
