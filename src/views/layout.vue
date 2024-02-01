@@ -233,7 +233,8 @@ import {
   getUserInfos,
   loadBoardList,
   getMessageCount,
-  logout
+  logout,
+  getSysSetting
 } from '@/model/api'
 import { ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -411,10 +412,18 @@ function logOut () {
   })
 }
 
+// 获取系统配置(开关评论等)
+async function loadSysSetting () {
+  let result = await getSysSetting()
+
+  if (!result) return
+  store.commit('saveSysSetting', result.data)
+}
 onMounted(() => {
   initScroll()
   getUserInfo()
   loadBoard()
+  loadSysSetting()
 })
 </script>
 

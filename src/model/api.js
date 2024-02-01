@@ -123,3 +123,8 @@ export function loadMessageList (params, showLoading) {
 export function logout () {
   return Request({ url: '/logout' })
 }
+
+// 系统设置
+export function getSysSetting () {
+  return Request({ url: '/getSysSetting' })
+}

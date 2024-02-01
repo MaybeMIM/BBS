@@ -38,7 +38,7 @@
           <span class="iconfont icon-good">
             {{ data.goodCount === 0 ? '点赞' : data.goodCount }}
           </span>
-          <span class="iconfont icon-comment">
+          <span class="iconfont icon-comment" v-if="showComment">
             {{ data.commentCount === 0 ? '评论' : data.commentCount }}
           </span>
         </div>
@@ -57,6 +57,9 @@ import Cover from '@/components/cover.vue'
 const props = defineProps({
   data: {
     type: Object
+  },
+  showComment: {
+    type: Boolean
   }
 })
 </script>

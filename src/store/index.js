@@ -13,7 +13,9 @@ export default createStore({
     // 当前二级板块
     activeBoardId: 0,
     // 消息数量
-    messageCountInfo: {}
+    messageCountInfo: {},
+    // 系统设置
+    sysSetting: {}
   },
   mutations: {
     // 点赞评论等操作 需要登录的状态，浏览文章等页面不需要登录 也就不需要登录弹框
@@ -41,6 +43,9 @@ export default createStore({
       state.messageCountInfo.total =
         state.messageCountInfo.total - state.messageCountInfo[value]
       state.messageCountInfo[value] = 0
+    },
+    saveSysSetting: (state, value) => {
+      state.sysSetting = value
     }
   },
   getters: {

@@ -51,7 +51,7 @@
           @loadData="loadArticle"
         >
           <template #default="{ data }">
-            <ArticleListItem :data="data" />
+            <ArticleListItem :data="data" :showComment="showComment" />
           </template>
         </DataList>
       </div>
@@ -132,6 +132,17 @@ function changeOrderType (type) {
   loadArticle()
 }
 
+// 系统设置(评论展示相关)
+const showComment = ref(false)
+watch(
+  () => store.state.sysSetting,
+  (newVal, oldVal) => {
+    if (newVal) {
+      showComment.value = newVal.commentOpen
+    }
+  },
+  { immediate: true, deep: true }
+)
 onMounted(() => loadArticle())
 </script>
 
