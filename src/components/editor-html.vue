@@ -1,7 +1,7 @@
 <template>
   <div class="editor-html">
     <Toolbar
-      style="border-bottom: 1px solid #ccc"
+      style="border-bottom: 1px solid #3b4142"
       :editor="editorRef"
       :defaultConfig="toolbarConfig"
       :mode="mode"
@@ -92,8 +92,31 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .editor-html {
-  border: 1px solid #ddd;
+  border: 1px solid rgb(56, 59, 62);
+  .w-e-bar {
+    background-color: #1b1d1d;
+    color: #9d978e;
+    .w-e-bar-divider {
+      background-color: #26292a;
+    }
+    .w-e-bar-item .disabled:hover,
+    .w-e-bar-item button:hover {
+      background: #222425;
+    }
+  }
+  .w-e-text-container [data-slate-editor] {
+    color: rgb(177, 173, 167);
+    background: #26292a;
+  }
+  .w-e-bar-item-menus-container,
+  .w-e-select-list {
+    background-color: #1b1d1d;
+  }
+  .w-e-select-list ul li:hover,
+  .w-e-select-list ul .selected {
+    background: #222425;
+  }
 }
 </style>

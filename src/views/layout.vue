@@ -25,9 +25,10 @@
           >
           <template v-for="board in boardList">
             <el-popover
-              placement="bottom-start"
-              :width="300"
+              placement="bottom"
+              :width="150"
               trigger="hover"
+              effect="dark"
               v-if="board.children.length > 0"
             >
               <template #reference>
@@ -454,9 +455,9 @@ onMounted(() => {
   height: 60px;
   top: 0;
   position: fixed;
-  box-shadow: 0 -4px 12px 0 #50a7d9;
+  box-shadow: 0 -4px 12px 0 rgb(34, 96, 132);
   z-index: 999;
-  background: #f3f2f2;
+  background: rgb(27, 29, 29);
   transition: all 0.3s;
 
   &_content {
@@ -476,7 +477,7 @@ onMounted(() => {
 
   &_title {
     font-size: 36px;
-    color: #585858;
+    color: rgb(157, 152, 142);
     margin-left: 5px;
   }
   .menu-penal {
@@ -486,10 +487,10 @@ onMounted(() => {
       padding: 5px 15px;
       border-radius: 15px;
       margin-left: 20px;
-      background: #c9c9c9;
+      background: rgb(53, 57, 59);
     }
     .home {
-      color: #000;
+      color: var(--text1);
     }
     .active {
       background: var(--link);
@@ -525,13 +526,14 @@ onMounted(() => {
     border-radius: 20px;
     margin-right: 10px;
     margin-top: 5px;
-    background: #ebeaea;
-    border: 1px solid #ddd;
-    color: rgb(109, 108, 108);
+    background: rgb(53, 57, 59);
+
+    border: 1px solid rgb(110, 102, 91);
+    color: rgb(146, 140, 129);
     cursor: pointer;
   }
   .sub-board:hover {
-    color: var(--link);
+    color: #ddd;
   }
   .active {
     background: var(--link);
@@ -550,6 +552,7 @@ onMounted(() => {
 .message-item {
   display: flex;
   justify-content: space-between;
+
   .text {
     flex: 1;
   }
@@ -563,12 +566,15 @@ onMounted(() => {
     text-align: center;
     line-height: 20px;
     color: #fff;
-    background: #f56c6c;
+    background: rgb(123, 14, 14);
   }
 }
-
+.el-dropdown-menu {
+  color: #979187;
+  background: #1b1d1d;
+}
 .footer {
-  background: #c9c9c9;
+  background: rgb(35, 37, 39);
   height: 140px;
   margin-top: 10px;
   .footer-content {
@@ -583,7 +589,7 @@ onMounted(() => {
 
       a {
         font-size: 14px;
-        color: var(--text);
+        color: var(--text1);
         line-height: 25px;
       }
     }

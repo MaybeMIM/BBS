@@ -238,14 +238,14 @@ async function loadMessage () {
 .message-center {
   .message-nav {
     font-size: initial;
-    color: #c4c4c4;
+    color: var(--text1);
     line-height: 35px;
     .icon-right {
       padding: 0 5px;
     }
   }
   .message-panel {
-    background: #fff;
+    background: rgb(27, 29, 29);
     padding: 10px;
     margin-top: 5px;
     .tab-list {
@@ -253,6 +253,7 @@ async function loadMessage () {
       .tag-item {
         position: relative;
         padding: 0 10px;
+        color: var(--text1);
         .count-tag {
           position: absolute;
           display: inline-block;
@@ -266,7 +267,7 @@ async function loadMessage () {
           text-align: center;
           line-height: 20px;
           color: #fff;
-          background: #f56c6c;
+          background: rgb(123, 14, 14);
         }
       }
       .back-ucenter {
@@ -282,7 +283,7 @@ async function loadMessage () {
       display: flex;
       font-size: 14px;
       align-items: center;
-      border-bottom: 1px solid #e4e7ed;
+      border-bottom: 1px solid rgb(111, 103, 92);
       padding: 10px;
       .message-content {
         margin-left: 5px;
@@ -295,6 +296,9 @@ async function loadMessage () {
           padding-left: 5px;
           margin-top: 5px;
         }
+      }
+      a {
+        color: #59a0dc;
       }
     }
   }

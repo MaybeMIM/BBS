@@ -58,4 +58,25 @@ async function handleUploadImage (event, insertImage, files) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.v-md-editor {
+  background: rgb(27, 29, 29);
+  .v-md-textarea-editor textarea {
+    background: rgb(27, 29, 29);
+    border-color: initial;
+  }
+  .v-md-editor__toolbar-item:hover {
+    background: rgb(32, 34, 35);
+  }
+  .v-md-editor__toolbar-item--active,
+  .v-md-editor__toolbar-item--active:hover {
+    background: rgb(49, 53, 54);
+  }
+  .v-md-editor__toolbar-divider::before {
+    border-left-color: rgb(56, 59, 62);
+  }
+  .v-md-editor__toolbar {
+    border-bottom-color: rgb(56, 59, 62);
+  }
+}
+</style>

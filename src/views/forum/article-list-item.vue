@@ -92,7 +92,7 @@ function editArticle (articleId) {
   .article-item-inner {
     display: flex;
     padding: 10px 0;
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid rgb(68, 73, 76);
     .article-body {
       flex: 1;
       .user-info {

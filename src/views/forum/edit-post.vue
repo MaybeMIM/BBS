@@ -350,5 +350,13 @@ function submit () {
       }
     }
   }
+  .el-card {
+    background: #1d1d1d;
+    color: #b2aea8;
+    border: 1px solid #35393b;
+    .el-card__header {
+      border-bottom: 1px solid #35393b;
+    }
+  }
 }
 </style>

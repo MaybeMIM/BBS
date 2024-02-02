@@ -14,33 +14,35 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(239, 239, 239);
+  background: rgb(35, 37, 38);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #bfbfbf;
+  background: rgb(58, 62, 65);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #bfbfbf;
+  background: rgb(58, 62, 65);
 }
 
 ::-webkit-scrollbar-corner {
-  background: #bfbfbf;
+  background: rgb(58, 62, 65);
 }
 
 :root {
-  --link: #007bff;
+  --link: #065ab5;
   --pink: #ff6699;
   --text: #61666d;
+  --text1: #cdcbc8;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@500&family=Roboto:wght@500;700&display=swap');
 
 body {
-  background: linear-gradient(to bottom, #2b5876, #4e4376);
+  background: rgb(24, 26, 27);
+  color: #cdcbc8;
 
   transition: all 0.5s;
   font-family: 'Roboto', sans-serif;
@@ -70,4 +72,39 @@ a {
 .no-audit {
   color: #868686;
   border: 1px solid #ddd;
+}
+
+body .el-button--primary {
+  color: #cdcbc8;
+  outline-color: initial;
+  background-color: #064c94;
+  border-color: #06498e;
+}
+
+.el-button:focus,
+.el-button:hover {
+  color: #cdcbc8 !important;
+  outline-color: initial !important;
+  background-color: #063e76 !important;
+  border-color: #064280 !important;
+}
+
+body .el-input__wrapper {
+  color: #979187;
+  background: initial;
+  box-shadow: 0 0 0 1px #292c2e inset;
+}
+body .el-input__wrapper::before {
+  background: red;
+}
+body .el-textarea__inner {
+  background: initial;
+  border-color: initial;
+  box-shadow: 0 0 0 1px #292c2e;
+}
+body .el-textarea .el-input__count {
+  background: #1d1d1d;
+}
+body .el-input__wrapper .el-input__inner {
+  color: #979187;
 }

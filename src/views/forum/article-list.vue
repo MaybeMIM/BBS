@@ -158,23 +158,23 @@ onMounted(() => loadArticle())
       color: #868686;
       font-size: 14px;
       cursor: pointer;
-      background: #c9c9c9;
-      &:hover {
-        color: var(--link);
-      }
+      background: rgb(53, 57, 59);
+
       a {
-        color: #868686;
+        color: var(--text);
         &:hover {
-          color: var(--link);
+          color: #ddd;
         }
       }
     }
     .active {
       background: var(--link);
       color: #fff;
-
       a {
         color: #fff;
+        &:hover {
+          color: #fff;
+        }
       }
     }
   }
@@ -187,7 +187,7 @@ onMounted(() => loadArticle())
       align-items: center;
       padding: 10px 15px;
       font-size: 15px;
-      border-bottom: 1px solid #000;
+      border-bottom: 1px solid rgb(68, 73, 76);
 
       .tab-item {
         color: #c9c9c9;

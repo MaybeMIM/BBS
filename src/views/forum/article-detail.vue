@@ -541,10 +541,10 @@ watch(
     top: 46px;
     right: 0;
     width: 285px;
-    color: #000;
+    color: var(--text1);
     .top-container {
       position: fixed;
-      background: #fff;
+      background: rgb(73, 79, 82);
       width: 285px;
       .toc-title {
         border-bottom: 1px solid #ddd;
@@ -566,18 +566,18 @@ watch(
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
-          color: #555666;
+          color: var(--text1);
           border-radius: 3px;
           font-size: 14px;
-          border-left: 2px solid #fff;
+          border-left: 2px solid rgb(112, 105, 93);
           &:hover {
             background: #ddd;
           }
         }
         .active {
           border-radius: 0px 3px 3px 0px;
-          border-left: 2px solid var(--link);
-          background: #ddd;
+          border-left: 2px solid #0c58ab;
+          background: rgb(43, 47, 48);
         }
       }
     }
@@ -600,7 +600,7 @@ watch(
     align-items: center;
     cursor: pointer;
     border-radius: 50%;
-    background: #9f9f9f;
+    background: rgb(73, 79, 82);
     margin-bottom: 30px;
     .iconfont {
       font-size: 22px;

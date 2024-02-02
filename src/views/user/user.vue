@@ -247,7 +247,7 @@ watch(
       width: 300px;
       margin-right: 10px;
       .avatar-panel {
-        background: #fff;
+        background: rgba(0, 0, 0, 0.2);
         text-align: center;
         padding: 10px;
         position: relative;
@@ -286,7 +286,7 @@ watch(
       .user-extend-panel {
         margin-top: 10px;
         padding: 10px;
-        background: #fff;
+        background: rgba(0, 0, 0, 0.2);
         .info-item {
           display: flex;
           align-items: center;
@@ -316,6 +316,9 @@ watch(
       flex: 1;
       background: rgba(0, 0, 0, 0.2);
       padding: 0 10px 10px 10px;
+      .el-tabs__item {
+        color: var(--text1);
+      }
     }
   }
 }
