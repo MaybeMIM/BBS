@@ -1,14 +1,6 @@
-# bbs-front-web
+# BBS
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+简易在线论坛网站
 
 ## 提交记录
 
@@ -22,20 +14,3 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 - del: 移除废弃无用的文件
 - build: 提交构建文件（一般为npm包使用）
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
