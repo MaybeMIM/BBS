@@ -135,8 +135,8 @@ const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
 
-const markdownHeight = window.innerHeight - 118
-const htmlEditorHeight = window.innerHeight - 156
+const markdownHeight = window.innerHeight - 131
+const htmlEditorHeight = window.innerHeight - 174
 
 const formData = ref({})
 const form = ref()
