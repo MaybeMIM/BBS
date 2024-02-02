@@ -181,7 +181,7 @@
     <div class="body-content">
       <router-view />
     </div>
-    <div class="footer">
+    <div class="footer" v-if="showFooter">
       <div
         class="footer-content"
         :style="{ width: proxy.globalInfo.bodyWidth + 'px' }"
@@ -237,13 +237,14 @@ import {
   getSysSetting
 } from '@/model/api'
 import { ref, watch, getCurrentInstance, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Login from './login.vue'
 import store from '@/store'
 import confirm from '@/utils/confirm.js'
 
 const { proxy } = getCurrentInstance()
 
+const route = useRoute()
 const router = useRouter()
 const showHeader = ref(true)
 
@@ -425,6 +426,20 @@ async function loadSysSetting () {
 function search () {
   router.push('/search')
 }
+
+// 是否展示底部
+const showFooter = ref(true)
+watch(
+  () => route.path,
+  (newVal, oldVal) => {
+    if (newVal.indexOf('bewPost') !== -1 || newVal.indexOf('editPost') !== -1) {
+      showFooter.value = false
+    } else {
+      showFooter.value = true
+    }
+  },
+  { immediate: true, deep: true }
+)
 onMounted(() => {
   initScroll()
   getUserInfo()
