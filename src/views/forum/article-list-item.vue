@@ -29,7 +29,8 @@
         <router-link :to="`/post/${data.articleId}`" class="article-title">
           <span v-if="data.topType === 1" class="top">置顶</span>
           <span v-if="data.status === 0" class="tag no-audit">待审核</span>
-          <span>{{ data.title }}</span>
+          <span v-if="htmlTitle" v-html="data.title"></span>
+          <span v-else>{{ data.title }}</span>
         </router-link>
         <div class="article-summary">{{ data.summary }}</div>
         <div class="article-info">
@@ -71,6 +72,11 @@ const props = defineProps({
   },
   showEdit: {
     type: Boolean
+  },
+  // 用于搜索关键字高亮
+  htmlTitle: {
+    type: Boolean,
+    default: false
   }
 })
 

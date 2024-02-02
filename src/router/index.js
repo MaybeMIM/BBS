@@ -48,6 +48,11 @@ const router = createRouter({
           path: '/user/message/:type',
           name: '消息中心',
           component: () => import('@/views/user/message-list.vue')
+        },
+        {
+          path: '/search',
+          name: '搜索',
+          component: () => import('@/views/search.vue')
         }
       ]
     },

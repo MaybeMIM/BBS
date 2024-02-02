@@ -67,10 +67,10 @@
         <!-- 登录注册 / 用户信息 -->
         <div class="user-info-penal">
           <div class="op-btn">
-            <el-button type="primary">
-              发帖<span class="iconfont icon-add" @click="newPost"></span>
+            <el-button type="primary" @click="newPost">
+              发帖<span class="iconfont icon-add"></span>
             </el-button>
-            <el-button type="primary">
+            <el-button type="primary" @click="search">
               搜索<span class="iconfont icon-search"></span>
             </el-button>
           </div>
@@ -353,6 +353,7 @@ watch(
 
 // 发布文章
 function newPost () {
+  console.log('11')
   if (!store.getters.getLoginUserInfo) {
     loginAndResign(1)
   } else {
@@ -418,6 +419,11 @@ async function loadSysSetting () {
 
   if (!result) return
   store.commit('saveSysSetting', result.data)
+}
+
+// 搜索
+function search () {
+  router.push('/search')
 }
 onMounted(() => {
   initScroll()

@@ -128,3 +128,8 @@ export function logout () {
 export function getSysSetting () {
   return Request({ url: '/getSysSetting' })
 }
+
+// 搜索功能
+export function searchArticle (params, showLoading) {
+  return Request({ url: '/forum/search', params, showLoading })
+}
