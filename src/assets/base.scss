@@ -108,3 +108,17 @@ body .el-textarea .el-input__count {
 body .el-input__wrapper .el-input__inner {
   color: #979187;
 }
+body .el-dialog {
+  color: #b2aea8;
+  background: #1d1d1d;
+}
+body .el-dialog__header {
+  text-align: center;
+}
+body .el-dialog__title {
+  color: #b2aea8;
+}
+body .custom-dialog .dialog-body {
+  border-top-color: rgb(56, 59, 62);
+  border-bottom-color: rgb(56, 59, 62);
+}

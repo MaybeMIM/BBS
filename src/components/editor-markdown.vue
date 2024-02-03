@@ -78,5 +78,17 @@ async function handleUploadImage (event, insertImage, files) {
   .v-md-editor__toolbar {
     border-bottom-color: rgb(56, 59, 62);
   }
+  .v-md-editor__left-area {
+    border-right-color: rgb(56, 59, 62);
+  }
+  .v-md-editor__left-area-title {
+    color: rgb(155, 172, 187);
+  }
+  .v-md-editor__left-area-title::after {
+    border-bottom-color: rgb(56, 59, 62);
+  }
+}
+.v-md-editor--editable .v-md-editor__editor-wrapper {
+  border-right-color: rgb(56, 59, 62);
 }
 </style>
