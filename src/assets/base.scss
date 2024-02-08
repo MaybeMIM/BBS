@@ -1,0 +1,57 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+// 滚动条
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(35, 37, 38);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(58, 62, 65);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(58, 62, 65);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgb(58, 62, 65);
+}
+
+:root {
+  --link: #065ab5;
+  --pink: #ff6699;
+  --text: #61666d;
+  --text1: #cdcbc8;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@500&family=Roboto:wght@500;700&display=swap');
+
+body {
+  color: #cdcbc8;
+
+  transition: all 0.5s;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+}
+
+* {
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+  color: var(--link);
+}
