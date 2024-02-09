@@ -36,6 +36,7 @@
               v-model.trim="formData.checkCode"
               size="large"
               class="input-panel"
+              @keyup.enter="handleLogin"
             >
               <template #prefix>
                 <span class="iconfont icon-checkcode"></span>
