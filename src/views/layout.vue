@@ -63,17 +63,35 @@
           </div>
         </el-header>
 
-        <el-main> </el-main
-      ></el-container>
+        <el-main class="main-content">
+          <div class="tag-content">
+            <el-tabs
+              type="border-card"
+              v-model="defaultActive"
+              @tab-change="tabClick"
+              @edit="tabClose"
+            >
+              <el-tab-pane
+                v-for="item in tabList"
+                :name="item.path"
+                :label="item.menuName"
+                :closable="tabList.length > 1"
+              ></el-tab-pane>
+            </el-tabs>
+          </div>
+          <div class="container-body">
+            <router-view></router-view>
+          </div>
+        </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, getCurrentInstance, nextTick } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
 
@@ -127,12 +145,51 @@ const defaultOpeneds = ref([])
 // 面包屑
 const menuBreadCrumbList = ref([])
 
+const menuMap = {}
 function init () {
   menuList.forEach(item => {
     defaultOpeneds.value.push(item.path)
+    // 作一个路由映射关系 方便后续点击菜单添加tab获取属性
+    item.children.forEach(subItem => {
+      menuMap[subItem.path] = subItem
+    })
   })
 }
 init()
+
+// tab 操作
+const tabList = ref([])
+function tabClick (e) {
+  // 切换路由
+  router.push(e)
+}
+// 关闭tabs
+function tabClose (targetKey, action) {
+  if (action !== 'remove') return
+  // 当前路由
+  let currentPath = defaultActive.value
+  let tabs = tabList.value
+  // 关闭当前选中的tab
+  if (targetKey === defaultActive.value) {
+    tabs.forEach((tab, index) => {
+      if (tab.path === targetKey) {
+        // 关闭当前tab 会先切换后面的tab 如果没有再切换到前一个的tab
+        let nextTab = tabs[index + 1] || tabs[index - 1]
+        if (nextTab) {
+          currentPath = nextTab.path
+        }
+      }
+    })
+  }
+  tabList.value = tabs.filter(tab => {
+    // 过滤掉当前关闭的tab
+    return tab.path !== targetKey
+  })
+
+  if (currentPath !== defaultActive.value) {
+    router.push(currentPath)
+  }
+}
 
 // 默认选中
 const defaultActive = ref()
@@ -141,6 +198,14 @@ watch(
   (newVal, oldVal) => {
     defaultActive.value = route.path
     menuBreadCrumbList.value = route.matched
+
+    // 不允许重复push
+    let currentMenu = tabList.value.find(item => {
+      return item.path === defaultActive.value
+    })
+    if (!currentMenu) {
+      tabList.value.push(menuMap[route.path])
+    }
   },
   { immediate: true, deep: true }
 )
@@ -214,6 +279,21 @@ function openMenu () {
       .el-breadcrumb__inner {
         color: #979187;
       }
+    }
+  }
+  .main-content {
+    padding: 0;
+    .tag-content {
+      .el-tabs--border-card {
+        border: none;
+      }
+      .el-tabs__content {
+        display: none;
+      }
+    }
+    .content-body {
+      overflow: hidden;
+      padding: 10px 10px 5px 10px;
     }
   }
 }
