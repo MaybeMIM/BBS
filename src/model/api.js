@@ -1,6 +1,16 @@
 import Request from '@/utils/request'
 
-// 获取文章列表
+// 登录
 export function login (params, errorCallback) {
   return Request({ url: 'login', params, errorCallback })
+}
+
+// 获取文章数据
+export function loadArticle (params) {
+  return Request({ url: '/forum/loadArticle', params })
+}
+
+// 获取板块
+export function loadBoard () {
+  return Request({ url: '/board/loadBoard' })
 }

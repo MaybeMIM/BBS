@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ElLoading } from 'element-plus'
 import Message from './message'
+import router from '@/router'
 
 const instance = axios.create({
   baseURL: '/api',

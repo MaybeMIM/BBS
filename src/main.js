@@ -26,7 +26,9 @@ app.config.globalProperties.globalInfo = {
   // 获取头像
   avatarUrl: '/api/file/getAvatar/',
   // 获取图片
-  imageUrl: '/api/file/getImage/'
+  imageUrl: '/api/file/getImage/',
+  // 暂时写死跳转访客端的地址
+  webDomain: 'http://localhost:3004/'
 }
 
 app.component('Dialog', Dialog)
