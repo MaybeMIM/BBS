@@ -113,7 +113,7 @@ const topHeight = 156
 const tableHeight = ref(
   props.options.tableHeight
     ? props.options.tableHeight
-    : window.innerHeight - topHeight - props.options.extHeight // 扩展高度(搜索、批量操作等区域)
+    : window.innerHeight - topHeight - (props.options.extHeight || 0) // 扩展高度(搜索、批量操作等区域)
 )
 
 // 初始化
