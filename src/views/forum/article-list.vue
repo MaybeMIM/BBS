@@ -235,8 +235,16 @@
 import { ref, getCurrentInstance } from 'vue'
 import Table from '@/components/table.vue'
 import Cover from '@/components/cover.vue'
+import confirm from '@/utils/confirm'
+import message from '@/utils/message'
 import ArticleBoard from './article-board.vue'
-import { loadArticle, loadBoard } from '@/model/api'
+import {
+  loadArticle,
+  loadBoard,
+  auditArticle,
+  topArticle,
+  delArticle
+} from '@/model/api'
 
 const { proxy } = getCurrentInstance()
 
@@ -299,11 +307,12 @@ const columns = [
   }
 ]
 const formData = ref({})
-// 批量选择
-const selectBatchList = []
 
 const tableData = ref({})
-const tableOptions = ref()
+const tableOptions = ref({
+  selectType: 'checkbox',
+  extHeight: 0
+})
 async function loadDataList () {
   let params = {
     pageNo: tableData.value.pageNo,
@@ -349,12 +358,40 @@ function updateBoard (data) {
   articleBoard.value.showUpdateBoard(data)
 }
 
+// 批量选择
+const selectBatchList = ref([])
 // 设置行多选
-function setRowSelected (rows) {}
+function setRowSelected (rows) {
+  selectBatchList.value = []
+  rows.forEach(i => {
+    selectBatchList.value.push(i.articleId)
+  })
+}
 
+const table = ref()
 // 批量操作
-function auditBatch () {}
-function delBatch () {}
+function auditBatch () {
+  confirm('你确定要批量审核吗？', async () => {
+    let result = await auditArticle({
+      articleIds: selectBatchList.value.join(',')
+    })
+    if (!result) return
+    message.success('操作成功！')
+    table.value.clearSelection()
+    loadDataList()
+  })
+}
+function delBatch () {
+  confirm('你确定要批量删除吗？', async () => {
+    let result = await delArticle({
+      articleIds: selectBatchList.value.join(',')
+    })
+    if (!result) return
+    message.success('操作成功！')
+    table.value.clearSelection()
+    loadDataList()
+  })
+}
 </script>
 
 <style lang="scss">

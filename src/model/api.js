@@ -14,7 +14,21 @@ export function loadArticle (params) {
 export function loadBoard () {
   return Request({ url: '/board/loadBoard' })
 }
-// 获取板块
-export function updateBoard (params) {
+// 修改板块
+export function updateBoard () {
   return Request({ url: '/forum/updateBoard', params })
+}
+// 批量审核
+export function auditArticle (params) {
+  return Request({ url: '/forum/auditArticle', params })
+}
+
+// 批量删除
+export function delArticle (params) {
+  return Request({ url: '/forum/delArticle', params })
+}
+
+// 置顶
+export function topArticle (params) {
+  return Request({ url: '/forum/topArticle', params })
 }
