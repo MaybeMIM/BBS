@@ -14,3 +14,7 @@ export function loadArticle (params) {
 export function loadBoard () {
   return Request({ url: '/board/loadBoard' })
 }
+// 获取板块
+export function updateBoard (params) {
+  return Request({ url: '/forum/updateBoard', params })
+}

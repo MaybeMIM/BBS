@@ -227,6 +227,7 @@
         </template>
       </Table>
     </div>
+    <ArticleBoard ref="articleBoard" @reload="loadDataList"></ArticleBoard>
   </div>
 </template>
 
@@ -234,6 +235,7 @@
 import { ref, getCurrentInstance } from 'vue'
 import Table from '@/components/table.vue'
 import Cover from '@/components/cover.vue'
+import ArticleBoard from './article-board.vue'
 import { loadArticle, loadBoard } from '@/model/api'
 
 const { proxy } = getCurrentInstance()
@@ -308,12 +310,15 @@ async function loadDataList () {
     pageSize: tableData.value.pageSize
   }
   Object.assign(params, formData.value)
+
+  // 选了一级分类 / 选二级分类
   if (params.boardIds && params.boardIds.length === 1) {
     params.pBoardId = params.boardIds[0]
   } else if (params.boardIds && params.boardIds.length === 2) {
     params.pBoardId = params.boardIds[0]
     params.boardId = params.boardIds[1]
   }
+  delete params.boardIds
 
   let result = await loadArticle(params)
 
@@ -337,6 +342,12 @@ async function loadBoardList () {
   boardList.value = result.data
 }
 loadBoardList()
+
+// 修改板块
+const articleBoard = ref()
+function updateBoard (data) {
+  articleBoard.value.showUpdateBoard(data)
+}
 
 // 设置行多选
 function setRowSelected (rows) {}
