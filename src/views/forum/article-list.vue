@@ -206,18 +206,20 @@
                   >
                   <el-dropdown-item
                     v-if="row.topType === 1 && row.status === 1"
-                    @click="toArticle(row)"
+                    @click="handleTopArticle(row)"
                     >取消置顶</el-dropdown-item
                   >
                   <el-dropdown-item
                     v-if="row.topType === 0 && row.status === 1"
-                    @click="toArticle(row)"
+                    @click="handleTopArticle(row)"
                     >置顶</el-dropdown-item
                   >
-                  <el-dropdown-item @click="dekArticle(row)"
+                  <el-dropdown-item @click="handleDelArticle(row)"
                     >删除</el-dropdown-item
                   >
-                  <el-dropdown-item v-if="row.status === 0" @click="audit(row)"
+                  <el-dropdown-item
+                    v-if="row.status === 0"
+                    @click="handleAudit(row)"
                     >审核</el-dropdown-item
                   >
                 </el-dropdown-menu>
@@ -388,6 +390,40 @@ function delBatch () {
     if (!result) return
     message.success('操作成功！')
     table.value.clearSelection()
+    loadDataList()
+  })
+}
+
+// 审批、删除
+function handleAudit (data) {
+  confirm(`你确定要审核【${data.title}】吗？`, async () => {
+    let result = await auditArticle({
+      articleIds: data.articleId
+    })
+    if (!result) return
+    message.success('操作成功！')
+    loadDataList()
+  })
+}
+function handleDelArticle (data) {
+  confirm(`你确定要删除【${data.title}】吗？`, async () => {
+    let result = await delArticle({
+      articleIds: data.articleId
+    })
+    if (!result) return
+    message.success('操作成功！')
+    loadDataList()
+  })
+}
+function handleTopArticle (data) {
+  const opName = data.topType === 0 ? '设为置顶' : '取消置顶'
+  confirm(`你确定要将【${data.title}】${opName}吗？`, async () => {
+    let result = await topArticle({
+      topType: data.topType === 0 ? 1 : 0,
+      articleId: data.articleId
+    })
+    if (!result) return
+    message.success('操作成功！')
     loadDataList()
   })
 }
