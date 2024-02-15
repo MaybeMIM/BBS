@@ -53,8 +53,7 @@ instance.interceptors.response.use(
       setTimeout(() => {
         router.push('/login')
       }, 1500)
-      // 不显示错误信息 直接弹框
-      return Promise.reject({ showError: false, msg: '登录超时' })
+      return Promise.reject({ showError: true, msg: '登录超时' })
     } else {
       if (errorCallback) {
         errorCallback(responseDate)

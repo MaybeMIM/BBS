@@ -229,7 +229,12 @@
         </template>
       </Table>
     </div>
+    <!-- 修改板块 -->
     <ArticleBoard ref="articleBoard" @reload="loadDataList"></ArticleBoard>
+    <!-- 附件信息 -->
+    <ArticleAttachment ref="attachment"></ArticleAttachment>
+    <!-- 查看评论 -->
+    <ArticleComment ref="articleComment"></ArticleComment>
   </div>
 </template>
 
@@ -240,6 +245,8 @@ import Cover from '@/components/cover.vue'
 import confirm from '@/utils/confirm'
 import message from '@/utils/message'
 import ArticleBoard from './article-board.vue'
+import ArticleAttachment from './article-attachment.vue'
+import ArticleComment from './article-comment.vue'
 import {
   loadArticle,
   loadBoard,
@@ -426,6 +433,17 @@ function handleTopArticle (data) {
     message.success('操作成功！')
     loadDataList()
   })
+}
+
+// 查看附件
+const attachment = ref()
+function showAttachment (nickName, articleId) {
+  attachment.value.show(nickName, articleId)
+}
+// 查看评论
+const articleComment = ref()
+function showComment (articleId) {
+  articleComment.value.show(articleId)
 }
 </script>
 

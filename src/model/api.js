@@ -32,3 +32,13 @@ export function delArticle (params) {
 export function topArticle (params) {
   return Request({ url: '/forum/topArticle', params })
 }
+
+// 下载附件
+export function getAttachment (params) {
+  return Request({ url: '/forum/getAttachment', params })
+}
+
+// 查看评论
+export function loadComment (params) {
+  return Request({ url: '/forum/loadComment4Article', params })
+}
