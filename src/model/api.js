@@ -57,3 +57,18 @@ export function delComment (params) {
 export function auditComment (params) {
   return Request({ url: '/forum/auditComment', params })
 }
+
+// 用户列表
+export function loadUserList (params) {
+  return Request({ url: '/user/loadUserList', params })
+}
+
+// 编辑用户
+export function updateUserStatus (params) {
+  return Request({ url: '/user/updateUserStatus', params })
+}
+
+// 发送系统消息
+export function sendMessage (params) {
+  return Request({ url: '/user/sendMessage', params })
+}
