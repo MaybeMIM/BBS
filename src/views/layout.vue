@@ -228,6 +228,7 @@ function openMenu () {
 <style lang="scss">
 .layout-body {
   .aside {
+    transition: all 0.3s;
     background: #3d3c4a;
     .logo {
       display: flex;
@@ -238,6 +239,9 @@ function openMenu () {
       background: #191828;
       font-size: 18px;
       padding-left: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .menu-panel {
       height: calc(100vh - 50px);
