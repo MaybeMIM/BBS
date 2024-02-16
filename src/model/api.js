@@ -15,7 +15,7 @@ export function loadBoard () {
   return Request({ url: '/board/loadBoard' })
 }
 // 修改板块
-export function updateBoard () {
+export function updateBoard (params) {
   return Request({ url: '/forum/updateBoard', params })
 }
 // 批量审核

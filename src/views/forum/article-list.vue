@@ -449,6 +449,9 @@ function showComment (articleId) {
 
 <style lang="scss">
 .data-list {
+  .top-panel {
+    padding-top: 10px;
+  }
   .user-info {
     display: flex;
     align-items: center;

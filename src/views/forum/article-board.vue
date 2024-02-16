@@ -25,7 +25,6 @@
             :options="boardList"
             :props="boardProps"
             v-model.trim="formData.boardIds"
-            @change="handelPickBoard(board, value)"
           ></el-cascader>
         </el-form-item>
       </el-form>
@@ -117,9 +116,6 @@ function showUpdateBoard (data) {
   })
 }
 
-function handelPickBoard (value, data) {
-  console.log(value, data)
-}
 defineExpose({ showUpdateBoard })
 </script>
 
