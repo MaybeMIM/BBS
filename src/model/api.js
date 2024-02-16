@@ -72,3 +72,13 @@ export function updateUserStatus (params) {
 export function sendMessage (params) {
   return Request({ url: '/user/sendMessage', params })
 }
+
+// 获取系统配置
+export function getSetting () {
+  return Request({ url: '/setting/getSetting' })
+}
+
+// 保存系统配置
+export function saveSetting (params) {
+  return Request({ url: '/setting/saveSetting', params })
+}
