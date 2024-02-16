@@ -42,3 +42,18 @@ export function getAttachment (params) {
 export function loadComment (params) {
   return Request({ url: '/forum/loadComment4Article', params })
 }
+
+// 获取评论列表
+export function loadCommentList (params) {
+  return Request({ url: '/forum/loadComment', params })
+}
+
+// 删除评论
+export function delComment (params) {
+  return Request({ url: '/forum/delComment', params })
+}
+
+// 编辑评论
+export function auditComment (params) {
+  return Request({ url: '/forum/auditComment', params })
+}
