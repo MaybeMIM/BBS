@@ -1,104 +1,104 @@
 <template>
   <div>
+    <!-- 搜索区域 -->
+    <div class="top-panel">
+      <el-form :model="formData" label-width="60px" @submit.prevent>
+        <el-row>
+          <el-col :span="4">
+            <el-form-item label="标题" prop="titleFuzzy">
+              <el-input
+                clearable
+                placeholder="请输入标题"
+                v-model.trim="formData.titleFuzzy"
+                @keyup.native="loadDataList"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="昵称" prop="nickNameFuzzy">
+              <el-input
+                clearable
+                placeholder="请输入昵称"
+                v-model.trim="formData.nickNameFuzzy"
+                @keyup.native="loadDataList"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="板块" prop="board">
+              <el-cascader
+                clearable
+                placeholder="请输入板块"
+                :options="boardList"
+                :props="boardProps"
+                v-model="formData.boardIds"
+                :style="{ width: '100%' }"
+              ></el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="附件" prop="attachment">
+              <el-select
+                clearable
+                placeholder="请选择附件"
+                v-model="formData.attachmentType"
+                :style="{ width: '100%' }"
+              >
+                <el-option :value="1" label="有附件"></el-option>
+                <el-option :value="0" label="无附件"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="状态" prop="status">
+              <el-select
+                clearable
+                placeholder="请选择状态"
+                v-model="formData.status"
+                :style="{ width: '100%' }"
+              >
+                <el-option :value="-1" label="已删除"></el-option>
+                <el-option :value="0" label="待审核"></el-option>
+                <el-option :value="1" label="已审核"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="4">
+            <el-form-item label="置顶" prop="topType">
+              <el-select
+                clearable
+                placeholder="请选择"
+                v-model="formData.topType"
+                :style="{ width: '100%' }"
+              >
+                <el-option :value="0" label="未置顶"></el-option>
+                <el-option :value="1" label="已置顶"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" :style="{ 'padding-left': '20px' }">
+            <el-button-group>
+              <el-button type="primary" @click="loadDataList">搜索</el-button>
+              <el-button
+                type="success"
+                @click="auditBatch"
+                :disabled="selectBatchList.length === 0"
+                >批量审批</el-button
+              >
+              <el-button
+                type="danger"
+                @click="delBatch"
+                :disabled="selectBatchList.length === 0"
+                >批量删除</el-button
+              >
+            </el-button-group>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
     <div class="data-list">
-      <!-- 搜索区域 -->
-      <div class="top-panel">
-        <el-form :model="formData" label-width="60px" @submit.prevent>
-          <el-row>
-            <el-col :span="4">
-              <el-form-item label="标题" prop="titleFuzzy">
-                <el-input
-                  clearable
-                  placeholder="请输入标题"
-                  v-model.trim="formData.titleFuzzy"
-                  @keyup.native="loadDataList"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="昵称" prop="nickNameFuzzy">
-                <el-input
-                  clearable
-                  placeholder="请输入昵称"
-                  v-model.trim="formData.nickNameFuzzy"
-                  @keyup.native="loadDataList"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="板块" prop="board">
-                <el-cascader
-                  clearable
-                  placeholder="请输入板块"
-                  :options="boardList"
-                  :props="boardProps"
-                  v-model="formData.boardIds"
-                  :style="{ width: '100%' }"
-                ></el-cascader>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="附件" prop="attachment">
-                <el-select
-                  clearable
-                  placeholder="请选择附件"
-                  v-model="formData.attachmentType"
-                  :style="{ width: '100%' }"
-                >
-                  <el-option :value="1" label="有附件"></el-option>
-                  <el-option :value="0" label="无附件"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item label="状态" prop="status">
-                <el-select
-                  clearable
-                  placeholder="请选择状态"
-                  v-model="formData.status"
-                  :style="{ width: '100%' }"
-                >
-                  <el-option :value="-1" label="已删除"></el-option>
-                  <el-option :value="0" label="待审核"></el-option>
-                  <el-option :value="1" label="已审核"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="4">
-              <el-form-item label="置顶" prop="topType">
-                <el-select
-                  clearable
-                  placeholder="请选择"
-                  v-model="formData.topType"
-                  :style="{ width: '100%' }"
-                >
-                  <el-option :value="0" label="未置顶"></el-option>
-                  <el-option :value="1" label="已置顶"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4" :style="{ 'padding-left': '20px' }">
-              <el-button-group>
-                <el-button type="primary" @click="loadDataList">搜索</el-button>
-                <el-button
-                  type="success"
-                  @click="auditBatch"
-                  :disabled="selectBatchList.length === 0"
-                  >批量审批</el-button
-                >
-                <el-button
-                  type="danger"
-                  @click="delBatch"
-                  :disabled="selectBatchList.length === 0"
-                  >批量删除</el-button
-                >
-              </el-button-group>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
       <Table
         ref="table"
         :columns="columns"
@@ -268,7 +268,7 @@ const columns = [
   {
     label: '封面',
     prop: 'cover',
-    width: 100,
+    width: 120,
     scopedSlots: 'cover'
   },
   {
@@ -296,7 +296,7 @@ const columns = [
     label: '状态信息',
     prop: 'status',
     align: 'center',
-    width: 100,
+    width: 120,
     scopedSlots: 'statusInfo'
   },
   {
@@ -305,13 +305,11 @@ const columns = [
     align: 'center',
     width: 180
   },
-
   {
     label: '操作',
     prop: 'op',
-    width: 150,
+    width: 100,
     align: 'center',
-
     scopedSlots: 'op'
   }
 ]
@@ -319,7 +317,8 @@ const formData = ref({})
 
 const tableData = ref({})
 const tableOptions = ref({
-  selectType: 'checkbox'
+  selectType: 'checkbox',
+  extHeight: 90
 })
 async function loadDataList () {
   let params = {
@@ -358,7 +357,6 @@ async function loadBoardList () {
   if (!result) return
   boardList.value = result.data
 }
-loadBoardList()
 
 // 修改板块
 const articleBoard = ref()
@@ -449,9 +447,6 @@ function showComment (articleId) {
 
 <style lang="scss">
 .data-list {
-  .top-panel {
-    padding-top: 10px;
-  }
   .user-info {
     display: flex;
     align-items: center;
