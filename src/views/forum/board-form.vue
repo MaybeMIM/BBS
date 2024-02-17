@@ -52,9 +52,8 @@
 <script setup>
 import { ref, watch, useAttrs, nextTick } from 'vue'
 import CoverUpload from '@/components/cover-upload.vue'
-import confirm from '@/utils/confirm'
 import message from '@/utils/message'
-import { saveBoard, delBoard, changeBoardSort } from '@/model/api'
+import { saveBoard } from '@/model/api'
 
 const props = defineProps({
   data: Object,
@@ -62,14 +61,14 @@ const props = defineProps({
 })
 
 const attrs = useAttrs()
-const emit = defineEmits()
+const emit = defineEmits(['reload'])
 
 const dialogConfig = ref({
   visible: false,
   title: '标题',
   buttons: [
     {
-      type: 'danger',
+      type: 'primary',
       text: '确定',
       click: e => {
         submitForm()
@@ -97,7 +96,12 @@ watch(
     dialogConfig.value.visible = newVal
     data.value = props.data
     formData.value = Object.assign({}, props.data.data)
-
+    if (formData.value.cover) {
+      // 需要变为一个对象  组件里需要imgUrl来展示图片
+      formData.value.cover = {
+        imgUrl: formData.value.cover
+      }
+    }
     nextTick(() => {
       distinguish()
     })
@@ -106,9 +110,10 @@ watch(
 )
 
 function close () {
-  form.value.resetFields()
   emit('update:visible', false)
   dialogConfig.value.visible = false
+  form.value.resetFields()
+  formData.value = {}
 }
 
 function create () {
@@ -120,6 +125,7 @@ function create () {
 function update () {
   dialogConfig.value.title =
     data.value.boardType === 0 ? '编辑板块' : '修改二级板块'
+  formData.value = Object.assign({}, props.data.data)
 
   if (formData.value.cover) {
     // 需要变为一个对象  组件里需要imgUrl来展示图片
@@ -129,6 +135,7 @@ function update () {
   }
 }
 
+// 区分新增 | 编辑
 function distinguish () {
   nextTick(() => {
     if (data.value.type === 'add') {
@@ -147,8 +154,23 @@ function distinguish () {
   })
 }
 
-function submitForm () {
-  close()
+async function submitForm () {
+  form.value.validate(async valid => {
+    if (!valid) return
+    let params = Object.assign({}, formData.value)
+    delete params.children
+    // 封面不是文件类型，设置为空
+    if (!(params.cover instanceof File)) {
+      delete params.cover
+    }
+
+    let result = await saveBoard(params)
+    if (!result) return
+
+    message.success('保存成功！')
+    emit('reload')
+    close()
+  })
 }
 </script>
 

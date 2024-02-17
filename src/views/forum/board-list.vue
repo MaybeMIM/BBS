@@ -54,7 +54,7 @@
                   type="primary"
                   link
                   :class="[index === 0 ? 'not-allow' : '']"
-                  @click="changeSort(index, 'up', 1)"
+                  @click="changeSort(index, 'up', 0)"
                   >上移</el-button
                 >
                 <el-divider direction="vertical"></el-divider>
@@ -64,7 +64,7 @@
                   :class="[
                     index === tableData.list.length - 1 ? 'not-allow' : ''
                   ]"
-                  @click="changeSort(index, 'down', 1)"
+                  @click="changeSort(index, 'down', 0)"
                   >下移</el-button
                 >
               </div>
@@ -126,7 +126,7 @@
                   type="primary"
                   link
                   :class="[
-                    index === tableData.list.length - 1 ? 'not-allow' : ''
+                    index === SecondTableData.list.length - 1 ? 'not-allow' : ''
                   ]"
                   @click="changeSort(index, 'down', 1)"
                   >下移</el-button
@@ -141,6 +141,7 @@
       v-model:visible="boardFormVisible"
       :data="boardObject"
       :currentBoard="currentBoard"
+      @reload="loadDataList"
     ></BoardForm>
   </div>
 </template>
@@ -149,8 +150,10 @@
 import { ref, getCurrentInstance, nextTick } from 'vue'
 import Table from '@/components/table.vue'
 import Cover from '@/components/cover.vue'
+import confirm from '@/utils/confirm'
 import BoardForm from './board-form.vue'
-import { loadBoard } from '@/model/api'
+import { loadBoard, delBoard, changeBoardSort } from '@/model/api'
+import message from '@/utils/message'
 
 const columns = [
   {
@@ -205,6 +208,10 @@ async function loadDataList () {
     // currentBoard.value = result.data[0]
     rowClick(result.data[0])
   } else {
+    // 新增二级板块之后 重新在获取的数据找到新增的数据
+    currentBoard.value = result.data.find(item => {
+      return item.boardId === currentBoard.value.boardId
+    })
     rowClick(currentBoard.value)
   }
   // 设置行选中 进入页面选中第一行
@@ -228,6 +235,50 @@ function showEdit (type, boardType, data) {
     boardType,
     data
   }
+}
+
+// 删除
+function del (data) {
+  confirm(`你确定要删除${data.boardName}吗？`, async () => {
+    let result = await delBoard({ boardId: data.boardId })
+    if (!result) return
+
+    // 如果删除当前选中 清除选中
+    if (currentBoard.value.boardId === data.boardId) {
+      currentBoard.value = null
+    }
+    message.success('删除成功！')
+    loadDataList()
+  })
+}
+
+// 修改排序
+async function changeSort (index, type, boardType) {
+  let dataList = tableData.value.list
+  if (boardType === 1) {
+    dataList = SecondTableData.value.list
+  }
+  // 第一个板块下移或上移
+  if (
+    (type === 'down' && index === dataList.length - 1) ||
+    (type === 'up' && index === 0)
+  ) {
+    return
+  }
+
+  let temp = dataList[index] // 先缓存当前板块数据
+  let number = type === 'down' ? 1 : -1 // 下移则下标加一
+  dataList.splice(index, 1) // 先删除
+  dataList.splice(index + number, 0, temp) // 再插入
+
+  let boardIdList = []
+  dataList.forEach(i => {
+    boardIdList.push(i.boardId)
+  })
+
+  let result = await changeBoardSort({ boardIds: boardIdList.join(',') })
+  if (!result) return
+  message.success('排序成功！')
 }
 </script>
 
