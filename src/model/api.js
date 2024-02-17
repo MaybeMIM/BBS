@@ -82,3 +82,18 @@ export function getSetting () {
 export function saveSetting (params) {
   return Request({ url: '/setting/saveSetting', params })
 }
+
+// 编辑板块
+export function saveBoard (params) {
+  return Request({ url: '/board/saveBoard', params })
+}
+
+// 删除板块
+export function delBoard (params) {
+  return Request({ url: '/board/delBoard', params })
+}
+
+// 改变板块排序
+export function changeBoardSort (params) {
+  return Request({ url: '/board/changeBoardSort', params })
+}
