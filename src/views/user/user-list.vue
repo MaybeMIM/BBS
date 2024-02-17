@@ -181,7 +181,6 @@ const formData = ref({})
 
 const tableData = ref({})
 const tableOptions = ref({
-  selectType: 'checkbox',
   extHeight: 45
 })
 
