@@ -114,7 +114,7 @@
             <div class="name-info">
               <div>
                 <a
-                  :href="`${proxy.globalInfo.webDomain}/user/${row.userId}`"
+                  :href="`${proxy.globalInfo.webDomain}user/${row.userId}`"
                   target="_blank"
                   >{{ row.nickName }}</a
                 >
