@@ -15,14 +15,14 @@
             clearable
             placeholder="请输入你想要查找的关键词"
             v-model.trim="formData.keyword"
-            @keyup.enter="search"
+            @keyup.enter="dbSearch"
             @focus="handleStartSearch"
             @change="handleClear"
           >
             <template #suffix>
               <span
                 class="iconfont icon-search"
-                @click="search"
+                @click="dbSearch"
               ></span> </template
           ></el-input>
         </el-form-item>
@@ -73,7 +73,19 @@ function handleStartSearch () {
   startSearch.value = true
 }
 
+function debounce (handle, ms) {
+  let timerId = null
+  return function (...args) {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => {
+      handle.call(this, args)
+    }, ms)
+  }
+}
 const articleListInfo = ref({})
+
+const dbSearch = debounce(search, 300)
+
 async function search () {
   form.value.validate(async v => {
     if (!v) return
