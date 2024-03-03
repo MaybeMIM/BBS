@@ -80,7 +80,8 @@ const rules = {
       required: true,
       message: '请输入评论内容',
       validator: checkPostComment
-    }
+    },
+    { min: 5, message: '评论至少5个字哦' }
   ]
 }
 
